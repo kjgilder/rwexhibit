@@ -19,7 +19,7 @@
     --border-color: var(--color-secondary-light-gray);
 
     /* Typography */
-    /* Using system fonts for performance as a base, can replace with specific fonts if provided later */
+    /* Using a robust serif stack for the headers to match the mock */
     --font-heading: 'Georgia', 'Times New Roman', serif;
     --font-body: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 
@@ -31,6 +31,8 @@
     --spacing-xl: 3rem;
 
     /* Layout */
-    --container-max-width: 800px; /* Readable width for text-heavy content */
-    --header-height: 60px;
+    --container-max-width: 100%;
+    /* Full width for the new layout */
+    --header-height: 80px;
+    /* Taller header */
 }

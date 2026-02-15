@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +8,21 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <header class="site-header">
         <div class="container">
-            <div class="logo">
-                <span>V</span> Roger Williams Exhibit
+            <div class="header-branding">
+                <img src="assets/v-logo-gold.png" alt="Vanderbilt Logo" class="header-logo-img">
+                <div class="header-text">
+                    <span class="header-title-main">VANDERBILT UNIVERSITY</span>
+                    <span class="header-title-sub">Peabody Library | Roger Williams Exhibit</span>
+                </div>
             </div>
             <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-                ☰
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
             <nav class="main-nav">
                 <ul>
@@ -27,24 +35,37 @@
     </header>
 
     <main>
-        <section class="hero section">
+        <div class="welcome-section">
             <div class="container">
-                <h1>Welcome!</h1>
-                <p>From the Peabody College Archives, this is information that extends beyond the walls of the exhibition.</p>
-                
-                <div class="qr-scanner-placeholder">
-                    <div class="qr-icon">📷</div>
-                    <h3>Scan QR Code</h3>
-                    <p>To learn more about each panel, scan the QR code to read more.</p>
-                </div>
+                <h1 class="welcome-text">Welcome!</h1>
+                <p class="welcome-subtext">From the Peabody College Archives, this is information that extends beyond
+                    the walls of the exhibition.</p>
+            </div>
+        </div>
 
-                <div class="actions">
-                    <a href="pages/timeline.html" class="btn">Explore Timeline</a>
-                    <br><br>
-                    <a href="pages/about.html" class="btn btn-secondary">About the Exhibit</a>
+        <div class="card-grid">
+            <!-- Scan QR Card -->
+            <div class="nav-card card-qr">
+                <div class="qr-content">
+                    <img src="assets/icon-qr.png" alt="QR Icon" class="qr-icon-large">
+                    <h2>SCAN QR CODE</h2>
+                    <p style="color: var(--color-primary-white); font-size: 0.9rem;">To learn more about each panel,
+                        scan the QR code to read more.</p>
                 </div>
             </div>
-        </section>
+
+            <!-- Explore Timeline Card -->
+            <a href="pages/timeline.html" class="nav-card card-timeline">
+                <img src="assets/v-logo-gold.png" alt="" class="nav-card-icon">
+                <h2>Explore Timeline</h2>
+            </a>
+
+            <!-- About Exhibit Card -->
+            <a href="pages/about.html" class="nav-card card-about">
+                <img src="assets/v-logo-gold.png" alt="" class="nav-card-icon">
+                <h2>About the Exhibit</h2>
+            </a>
+        </div>
     </main>
 
     <footer class="site-footer">
@@ -55,4 +76,5 @@
 
     <script src="js/main.js"></script>
 </body>
+
 </html>
