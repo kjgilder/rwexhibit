@@ -1,0 +1,36 @@
+:root {
+    /* Vanderbilt Brand Colors */
+    --color-primary-black: #1C1C1C;
+    --color-primary-white: #FFFFFF;
+    --color-primary-gold: #CFAE70;
+    --color-primary-sand: #E0D5C0;
+
+    --color-secondary-dark-gray: #777777;
+    --color-secondary-light-gray: #E4E4E4;
+    --color-secondary-cream: #F5F3EF;
+    --color-secondary-highlight: #ECB748;
+    --color-secondary-oak: #946E24;
+
+    /* Semantic Color Mapping */
+    --text-color: var(--color-primary-black);
+    --background-color: var(--color-primary-white);
+    --accent-color: var(--color-primary-gold);
+    --secondary-text-color: var(--color-secondary-dark-gray);
+    --border-color: var(--color-secondary-light-gray);
+
+    /* Typography */
+    /* Using system fonts for performance as a base, can replace with specific fonts if provided later */
+    --font-heading: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* Layout */
+    --container-max-width: 800px; /* Readable width for text-heavy content */
+    --header-height: 60px;
+}

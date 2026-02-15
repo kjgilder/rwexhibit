@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibit Detail - Roger Williams Exhibit</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html"><span>V</span> Roger Williams Exhibit</a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                ☰
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="timeline.html">Explore Timeline</a></li>
+                    <li><a href="about.html">About the Exhibit</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container section">
+        <article class="detail-content">
+            <h1 id="panel-title">Loading...</h1>
+            <p class="subtitle" id="panel-subtitle"></p>
+
+            <div class="content-body" id="panel-body">
+                <p>Content loading...</p>
+            </div>
+
+            <div class="media-placeholder"
+                style="background: #eee; height: 200px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
+                <p>[Image / Media Placeholder]</p>
+            </div>
+
+            <a href="timeline.html" class="btn btn-secondary">← Back to Timeline</a>
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Vanderbilt University - Peabody Library</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Simple mock content loader based on URL parameter
+        // In a real app, this might fetch JSON or be server-side rendered.
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const panelId = params.get('panel');
+
+            // Mock Data
+            const data = {
+                'origins-early': {
+                    title: 'The Earliest Steps',
+                    subtitle: 'Education Before the Civil War (1833–1863)',
+                    body: 'This section explores the educational landscape for African Americans in Nashville prior to the Civil War, highlighting early efforts and the systemic barriers that existed.'
+                },
+                'origins-birth': {
+                    title: 'The Birth of Roger Williams University',
+                    subtitle: '1864–1867',
+                    body: 'Roger Williams University was founded in the wake of the Civil War. This panel details the founding principles, key figures, and the initial establishment of the university.'
+                },
+                // Add more mock data as needed
+            };
+
+            const content = data[panelId];
+
+            if (content) {
+                document.getElementById('panel-title').innerText = content.title;
+                document.getElementById('panel-subtitle').innerText = content.subtitle;
+                document.getElementById('panel-body').innerHTML = `<p>${content.body}</p>`;
+            } else {
+                document.getElementById('panel-title').innerText = 'Content Not Found';
+                document.getElementById('panel-body').innerHTML = '<p>The requested panel content could not be found.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>
