@@ -1,6 +1,7 @@
 **Current homepage from iPhone browser:**
 
-<img width="360" height="640" alt="Screenshot 2026-02-17 at 2 33 52 PM" src="https://github.com/user-attachments/assets/6c41d0ca-aa52-4433-8c8c-50a964428337" />
+<img width="382" height="634" alt="Screenshot 2026-02-17 at 2 35 42 PM" src="https://github.com/user-attachments/assets/64966822-1483-42d2-afe9-42b9b1898403" />
+
 
 
 **Current homepage from computer browser:**
