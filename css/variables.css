@@ -1,11 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=Inter:wght@400;700&family=Libre+Caslon+Display&display=swap');
+
 :root {
     /* Vanderbilt Brand Colors */
     --color-primary-black: #1C1C1C;
     --color-primary-white: #FFFFFF;
     --color-primary-gold: #CFAE70;
+    /* Metallic Gold equivalent */
     --color-primary-sand: #E0D5C0;
 
-    --color-secondary-dark-gray: #777777;
+    /* Secondary Colors from Brand Guide */
+    --color-secondary-dark-gray: #555555;
+    /* Adjusted to standard Dark Grey if 777777 was vague */
     --color-secondary-light-gray: #E4E4E4;
     --color-secondary-cream: #F5F3EF;
     --color-secondary-highlight: #ECB748;
@@ -18,21 +23,22 @@
     --secondary-text-color: var(--color-secondary-dark-gray);
     --border-color: var(--color-secondary-light-gray);
 
-    /* Typography */
-    /* Using a robust serif stack for the headers to match the mock */
-    --font-heading: 'Georgia', 'Times New Roman', serif;
-    --font-body: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    /* Typography - Official */
+    --font-heading: 'Libre Caslon Display', 'Georgia', serif;
+    --font-body: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    --font-emphasis: 'Antonio', 'Impact', sans-serif;
 
     /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
+    /* ~24px */
     --spacing-lg: 2rem;
+    /* ~32px */
     --spacing-xl: 3rem;
+    /* ~48px */
 
     /* Layout */
     --container-max-width: 100%;
-    /* Full width for the new layout */
     --header-height: 80px;
-    /* Taller header */
 }
