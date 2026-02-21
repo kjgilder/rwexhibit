@@ -1,9 +1,10 @@
 **Current homepage from iPhone browser:**
 
-<img width="382" height="634" alt="Screenshot 2026-02-17 at 2 35 42 PM" src="https://github.com/user-attachments/assets/64966822-1483-42d2-afe9-42b9b1898403" />
+<img width="368" height="635" alt="Screenshot 2026-02-21 at 10 25 17 AM" src="https://github.com/user-attachments/assets/c75675f7-e2f7-4c73-908c-074cbc7f7adb" />
+
 
 
 
 **Current homepage from computer browser:**
 
-<img width="983" height="761" alt="Screenshot 2026-02-17 at 2 34 52 PM" src="https://github.com/user-attachments/assets/d9b601f8-0b99-46ad-8e98-6a94db80c7aa" />
+<img width="986" height="676" alt="Screenshot 2026-02-21 at 10 25 41 AM" src="https://github.com/user-attachments/assets/37125c58-c551-46eb-abfc-cedf29dc2dcc" />
