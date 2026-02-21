@@ -412,6 +412,111 @@ img {
     display: block;
 }
 
+/* Dialog Styles */
+.site-dialog {
+    margin: auto;
+    padding: 0;
+    border: 2px solid var(--color-primary-gold);
+    border-radius: 8px;
+    background-color: var(--color-primary-white);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.site-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.dialog-inner {
+    padding: var(--spacing-lg);
+    text-align: center;
+}
+
+.dialog-inner p {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-primary-black);
+    font-family: var(--font-body);
+}
+
+.btn-close {
+    background-color: var(--color-primary-black);
+    color: var(--color-primary-gold);
+    border: 1px solid var(--color-primary-gold);
+    padding: 10px 24px;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+}
+
+.btn-close:hover {
+    opacity: 0.8;
+}
+
+/* Details / Summary Styles for Accordions */
+details {
+    background: var(--color-primary-white);
+    border: 1px solid var(--color-primary-gold);
+    border-radius: 4px;
+    margin-bottom: var(--spacing-sm);
+    overflow: hidden;
+}
+
+summary {
+    cursor: pointer;
+    padding: var(--spacing-md);
+    background-color: var(--color-primary-white);
+    /* Adjust if needed */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+summary:hover {
+    background-color: rgba(206, 178, 121, 0.1);
+    /* light tint of gold */
+}
+
+summary h2 {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    color: var(--color-primary-black);
+}
+
+summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-primary-gold);
+    transition: transform 0.2s;
+}
+
+details[open] summary::after {
+    content: '−';
+    /* minus sign */
+}
+
+/* Hide native summary triangle in webkit/blink and standard */
+summary::-webkit-details-marker {
+    display: none;
+}
+
+details>summary {
+    list-style: none;
+    /* overrides standard */
+}
+
+.details-content {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--color-primary-gold);
+    background: var(--color-primary-white);
+}
+
 /* Footer */
 .site-footer {
     background-color: var(--color-primary-black);

@@ -37,19 +37,17 @@
         <div class="welcome-section">
             <div class="container">
                 <h1 class="welcome-text">Welcome!</h1>
-                <p class="welcome-subtext">From the Peabody College Archives, this is information that extends beyond
-                    the walls of the exhibition.</p>
+                <p class="welcome-subtext">This is the Roger Williams Exhibit
+                    companion site, where you can learn beyond the walls of the exhibit.</p>
             </div>
         </div>
 
         <div class="card-grid">
             <!-- Scan QR Card -->
-            <div class="nav-card card-qr">
+            <div class="nav-card card-qr" id="qr-card" role="button" tabindex="0" style="cursor: pointer;">
                 <div class="qr-content">
                     <!-- Image removed as per user request -->
                     <h2>SCAN QR CODE</h2>
-                    <p style="color: var(--color-primary-white); font-size: 0.9rem;">To learn more about each panel,
-                        scan the QR code on the wall to read more.</p>
                 </div>
             </div>
 
@@ -63,11 +61,20 @@
                 <h2>About the Exhibit</h2>
             </a>
         </div>
+
+        <!-- Dialog Popup -->
+        <dialog id="qr-dialog" class="site-dialog">
+            <div class="dialog-inner">
+                <p>To learn more about each panel, scan the QR code on the wall or navigate to the corresponding section
+                    in the timeline.</p>
+                <button id="close-dialog" class="btn-close">Close</button>
+            </div>
+        </dialog>
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2024 Vanderbilt University - Peabody Library</p>
+            <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
         </div>
     </footer>
 

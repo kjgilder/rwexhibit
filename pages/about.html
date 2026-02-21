@@ -12,14 +12,11 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <div class="header-branding">
-                <a href="../index.html"
-                    style="display: flex; align-items: center; gap: inherit; text-decoration: none;">
-                    <img src="../assets/dimensional-v-white.png" alt="Vanderbilt University" class="header-lockup">
-                    <div class="header-separator"></div>
-                    <div class="header-sub-text">Peabody Library | Roger Williams Exhibit</div>
-                </a>
-            </div>
+            <a href="../index.html" class="header-branding" style="text-decoration: none;">
+                <img src="../assets/dimensional-v-white.png" alt="Vanderbilt University" class="header-lockup">
+                <div class="header-separator"></div>
+                <div class="header-sub-text">Peabody Library | Roger Williams Exhibit</div>
+            </a>
             <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -36,32 +33,45 @@
     </header>
 
     <main class="container section">
-        <h1>About the Exhibit</h1>
-        <p>This digital companion extends the physical "Roger Williams Exhibit" at the Peabody Library.</p>
-
-        <section class="section">
-            <h2>Our Purpose</h2>
-            <p>The physical exhibit displays historical information that is not easily available elsewhere, much of
-                which is too dense or lengthy to fit on gallery walls. This website serves as a permanent extension,
-                providing deeper narratives, student voices, timelines, and primary sources.</p>
+        <section class="section" style="margin-top: var(--spacing-md);">
+            <details>
+                <summary>
+                    <h2>How to Read This Room</h2>
+                </summary>
+                <div class="details-content">
+                    <p style="margin-bottom: var(--spacing-sm);">This room presents two histories that unfolded on the
+                        same land but within different educational systems. One side traces the rise and decline of
+                        Roger Williams University, a Black institution founded during Reconstruction to educate
+                        teachers, ministers, and civic leaders. The other follows the development of Peabody College, a
+                        white teacher-training institution shaped by Northern philanthropy and public investment.</p>
+                    <p style="margin-bottom: var(--spacing-sm);">These stories are presented side by side because they
+                        were never separate in time or place. They were shaped by the same city, the same state and
+                        federal policies, and the same legal boundaries of segregation. Yet access to land, funding, and
+                        institutional security differed sharply.</p>
+                    <p style="margin-bottom: var(--spacing-sm);">Throughout the room, QR codes offer deeper
+                        context—student voices, original documents, and moments of conflict and resilience that cannot
+                        fit on the walls. Each QR panel stands on its own and can be explored in any order. Visitors are
+                        invited to move back and forth between the exhibits, using these digital panels to explore how
+                        education, race, law, and power shaped Nashville’s educational landscape.</p>
+                </div>
+            </details>
         </section>
 
         <section class="section">
-            <h2>Credits & Acknowledgements</h2>
-            <p><strong>Curators:</strong> [Name List Placeholder]</p>
-            <p><strong>Design Team:</strong> [Name List Placeholder]</p>
-            <p><strong>Digital Development:</strong> [Name List Placeholder]</p>
-        </section>
-
-        <section class="section">
-            <h2>References & Digital Archive</h2>
-            <p>For further research, please visit the <a href="#">Peabody College Archives</a>.</p>
+            <details>
+                <summary>
+                    <h2>Credits</h2>
+                </summary>
+                <div class="details-content">
+                    <p>[ADD CREDITS]</p>
+                </div>
+            </details>
         </section>
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2024 Vanderbilt University - Peabody Library</p>
+            <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
         </div>
     </footer>
 
