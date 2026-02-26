@@ -41,58 +41,70 @@
     </header>
 
     <main class="container section">
-        <h1>Explore Timeline</h1>
-        <p>Reclaiming the Record: Roger Williams University and Nashville's African American Educational Heritage</p>
-
-        <div class="timeline-section">
-            <h2>RWU Origins (Panel 2)</h2>
-            <ul class="timeline-list">
-                <li class="timeline-item">
-                    <span class="timeline-date">1833–1863</span>
-                    <a href="template.html?panel=origins-early">The Earliest Steps: Education Before the Civil War</a>
-                </li>
-                <li class="timeline-item">
-                    <span class="timeline-date">1864–1867</span>
-                    <a href="template.html?panel=origins-birth">The Birth of Roger Williams University</a>
-                </li>
-            </ul>
+        <div class="timeline-header">
+            <h1>Roger Williams University Timeline</h1>
+            <p class="timeline-subtitle">Explore the complete chronological history</p>
         </div>
 
-        <div class="timeline-section">
-            <h2>RWU Student Life (Panel 3)</h2>
-            <ul class="timeline-list">
-                <li class="timeline-item">
-                    <span class="timeline-date">1863–1877</span>
-                    <a href="template.html?panel=student-reconstruction">A Time of Possibility: Reconstruction and
-                        Education</a>
-                </li>
-                <li class="timeline-item">
-                    <span class="timeline-date">1874–1905</span>
-                    <a href="template.html?panel=student-campus">Building a Campus: The Hillsboro Pike Years</a>
-                </li>
-            </ul>
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span class="progress-text" id="progress-text">Section 1 of 12</span>
+                <span class="badge badge-gold" id="progress-badge">Wall 1</span>
+            </div>
+            <div class="interactive-timeline-track" id="interactive-track">
+                <!-- Nodes injected by JS -->
+            </div>
         </div>
 
-        <div class="timeline-section">
-            <h2>Fire/Aftermath Panel (Panel 4&5)</h2>
-            <ul class="timeline-list">
-                <li class="timeline-item">
-                    <span class="timeline-date">1885–1896</span>
-                    <a href="template.html?panel=fire-crisis">Crisis and Resilience: Student Activism</a>
-                </li>
-                <li class="timeline-item">
-                    <span class="timeline-date">1900–1905</span>
-                    <a href="template.html?panel=fire-turn">The Turn of the Century: Recognition and Tragedy</a>
-                </li>
-                <li class="timeline-item">
-                    <span class="timeline-date">1904–1910</span>
-                    <a href="template.html?panel=fire-realestate">Real Estate, Race, and Relocation</a>
-                </li>
-                <li class="timeline-item">
-                    <span class="timeline-date">1908–1925</span>
-                    <a href="template.html?panel=fire-newbeginning">A New Beginning: The White's Creek Pike Campus</a>
-                </li>
-            </ul>
+        <!-- Main Panel Content -->
+        <div class="panel-card wall-1" id="panel-card-bg">
+            <h2 class="year-heading" id="year-heading">1833</h2>
+            <h3 class="panel-title" id="panel-title">First Black School in Nashville</h3>
+        </div>
+
+        <!-- Gallery Wall Text Accordion -->
+        <details class="accordion-custom accordion-gold" id="gallery-accordion">
+            <summary>
+                <div class="summary-inner">
+                    <span class="icon-circle icon-gold">W</span>
+                    <h4>From the Gallery Walls</h4>
+                </div>
+                <span class="chevron"></span>
+            </summary>
+            <div class="details-content" id="gallery-content">
+                <p style="margin-bottom: var(--spacing-sm);">Alphonso Sumner, a free Black barber, organizes Nashville's
+                    first "school" for Black children—a collection of classes that preceded white missionaries' efforts
+                    by three decades. These classes operated intermittently, running only a few months each year due to
+                    periodic outbreaks of cholera and smallpox.</p>
+                <p>However, these efforts ended abruptly after Sumner was accused of writing letters to a local fugitive
+                    slave in the North—he received a public whipping and was forced to close the school and flee to
+                    Cincinnati.</p>
+            </div>
+        </details>
+
+        <!-- Additional Context Accordion -->
+        <details class="accordion-custom accordion-blue" id="context-accordion" open>
+            <summary>
+                <div class="summary-inner">
+                    <span class="icon-circle icon-blue">+</span>
+                    <h4>Additional Context</h4>
+                </div>
+            </summary>
+            <div class="details-content" id="context-content">
+                <p>[ENTER CONTENT HERE - Information about the period between Alphonso Sumner's forced closure and the
+                    reopening efforts, including community responses and underground educational efforts during
+                    1833-1836]</p>
+            </div>
+        </details>
+
+        <div class="nav-buttons">
+            <button class="btn-nav btn-prev" id="btn-prev" disabled>
+                <span class="arrow">‹</span> Previous
+            </button>
+            <button class="btn-nav btn-next" id="btn-next">
+                Next <span class="arrow">›</span>
+            </button>
         </div>
 
     </main>
@@ -104,6 +116,227 @@
     </footer>
 
     <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineData = [
+                { year: "1833", wall: "Wall 1", title: "First Black School in Nashville", contextPlaceholder: "Information about the period between Alphonso Sumner's forced closure and the reopening efforts, including community responses and underground educational efforts during 1833-1836" },
+                { year: "1836", wall: "Wall 1", title: "Growth of Native Black Schools (1836-1850)", contextPlaceholder: "Details about the growth of Black education in Nashville during the 1840s-1850s and early Civil War period, leading up to the establishment of the Nashville Normal and Theological Institute" },
+                { year: "1864", wall: "Wall 1", title: "Origins of the Nashville Normal and Theological Institute", contextPlaceholder: "" },
+                { year: "1867", wall: "Wall 1", title: "Formal Incorporation", contextPlaceholder: "" },
+                { year: "1874", wall: "Wall 1", title: "Campus Development on Hillsboro Pike", contextPlaceholder: "" },
+                { year: "1881", wall: "Wall 1", title: "Rising Enrollment and Prestige", contextPlaceholder: "" },
+                { year: "1885", wall: "Wall 1", title: "Transitions and Challenges", contextPlaceholder: "" },
+                { year: "1890-1899", wall: "Wall 1", title: "The End of an Era", contextPlaceholder: "" },
+                { year: "1900", wall: "Wall 2", title: "Recognition and Expansion", contextPlaceholder: "" },
+                { year: "1905", wall: "Wall 2", title: "The Fire and Relocation", contextPlaceholder: "" },
+                { year: "1908", wall: "Wall 2", title: "A New Beginning on White's Creek Pike", contextPlaceholder: "" },
+                { year: "1929", wall: "Wall 2", title: "Closure and Legacy", contextPlaceholder: "" }
+            ];
+
+            const interactiveTrack = document.getElementById('interactive-track');
+            const progressText = document.getElementById('progress-text');
+            const progressBadge = document.getElementById('progress-badge');
+            const yearHeading = document.getElementById('year-heading');
+            const panelTitle = document.getElementById('panel-title');
+            const contextContent = document.getElementById('context-content');
+            const galleryContent = document.getElementById('gallery-content');
+            const galleryAccordion = document.getElementById('gallery-accordion');
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            let currentIndex = 0;
+            let nodePopover, popoverYear, popoverBtn;
+            let activePopoverIndex = -1;
+
+            // Initialize Nodes
+            function initTimelineNodes() {
+                interactiveTrack.innerHTML = '';
+
+                // Add background line
+                const trackLine = document.createElement('div');
+                trackLine.className = 'timeline-line';
+                interactiveTrack.appendChild(trackLine);
+
+                // Add fill line
+                const fillLine = document.createElement('div');
+                fillLine.className = 'timeline-line-fill';
+                fillLine.id = 'timeline-fill';
+                interactiveTrack.appendChild(fillLine);
+
+                // Add Popover
+                nodePopover = document.createElement('div');
+                nodePopover.className = 'node-popover';
+                nodePopover.style.display = 'none';
+
+                popoverYear = document.createElement('span');
+                popoverYear.className = 'popover-year';
+
+                popoverBtn = document.createElement('button');
+                popoverBtn.className = 'popover-btn';
+                popoverBtn.textContent = 'Visit Section';
+
+                nodePopover.appendChild(popoverYear);
+                nodePopover.appendChild(popoverBtn);
+                interactiveTrack.appendChild(nodePopover);
+
+                popoverBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (activePopoverIndex !== -1) {
+                        currentIndex = activePopoverIndex;
+                        updateUI();
+                        updateURL();
+                        nodePopover.style.display = 'none';
+                        activePopoverIndex = -1;
+                    }
+                });
+
+                // Add node container
+                const nodesContainer = document.createElement('div');
+                nodesContainer.className = 'timeline-nodes-container';
+
+                timelineData.forEach((item, index) => {
+                    const node = document.createElement('div');
+                    node.className = 'timeline-node';
+
+                    // Set precise position along the line
+                    const positionPercentage = (index / (timelineData.length - 1)) * 100;
+                    node.style.left = `${positionPercentage}%`;
+
+                    if (index === currentIndex) node.classList.add('active');
+                    if (index < currentIndex) node.classList.add('completed');
+
+                    node.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (activePopoverIndex === index) {
+                            nodePopover.style.display = 'none';
+                            activePopoverIndex = -1;
+                        } else {
+                            activePopoverIndex = index;
+                            popoverYear.textContent = item.year;
+                            nodePopover.style.left = `${positionPercentage}%`;
+                            nodePopover.style.display = 'flex';
+                        }
+                    });
+                    nodesContainer.appendChild(node);
+                });
+                interactiveTrack.appendChild(nodesContainer);
+
+                // Close popover if clicking outside
+                document.addEventListener('click', () => {
+                    if (nodePopover && nodePopover.style.display === 'flex') {
+                        nodePopover.style.display = 'none';
+                        activePopoverIndex = -1;
+                    }
+                });
+            }
+
+            function updateUI() {
+                if (nodePopover && nodePopover.style.display === 'flex') {
+                    nodePopover.style.display = 'none';
+                    activePopoverIndex = -1;
+                }
+                const item = timelineData[currentIndex];
+
+                // Update Progress Text
+                progressText.textContent = `Section ${currentIndex + 1} of ${timelineData.length}`;
+                if (item.wall) {
+                    progressBadge.style.display = 'inline-block';
+                    progressBadge.textContent = item.wall;
+                } else {
+                    progressBadge.style.display = 'none';
+                }
+
+                // Update fill line width
+                const fillLine = document.getElementById('timeline-fill');
+                if (fillLine) {
+                    const fillPercentage = (currentIndex / (timelineData.length - 1)) * 100;
+                    fillLine.style.width = `${fillPercentage}%`;
+                }
+
+                // Update Card Texts
+                yearHeading.textContent = item.year;
+                panelTitle.textContent = item.title;
+
+                // Update Accordions
+                galleryAccordion.removeAttribute('open');
+
+                if (currentIndex === 0) {
+                    galleryContent.innerHTML = `<p style="margin-bottom: var(--spacing-sm);">Alphonso Sumner, a free Black barber, organizes Nashville's first "school" for Black children—a collection of classes that preceded white missionaries' efforts by three decades. These classes operated intermittently, running only a few months each year due to periodic outbreaks of cholera and smallpox.</p><p>However, these efforts ended abruptly after Sumner was accused of writing letters to a local fugitive slave in the North—he received a public whipping and was forced to close the school and flee to Cincinnati.</p>`;
+                } else {
+                    galleryContent.innerHTML = `<p>[ENTER GALLERY TEXT HERE]</p>`;
+                }
+
+                if (item.contextPlaceholder) {
+                    contextContent.innerHTML = `<p>[ENTER CONTENT HERE - ${item.contextPlaceholder}]</p>`;
+                } else {
+                    contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
+                }
+
+                // Update Nodes Active State
+                const nodes = interactiveTrack.querySelectorAll('.timeline-node');
+                nodes.forEach((node, index) => {
+                    node.classList.remove('active', 'completed');
+                    if (index === currentIndex) {
+                        node.classList.add('active');
+                    } else if (index < currentIndex) {
+                        node.classList.add('completed');
+                    }
+                });
+
+                // Update Navigation Buttons
+                btnPrev.disabled = currentIndex === 0;
+                btnNext.disabled = currentIndex === timelineData.length - 1;
+            }
+
+            function updateURL() {
+                const year = timelineData[currentIndex].year;
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?year=' + year;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+
+                // Auto scroll to top on nav
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function checkURL() {
+                const params = new URLSearchParams(window.location.search);
+                const year = params.get('year');
+                if (year) {
+                    const foundIndex = timelineData.findIndex(item => item.year === year);
+                    if (foundIndex !== -1) {
+                        currentIndex = foundIndex;
+                    }
+                }
+            }
+
+            // Event Listeners for Nav
+            btnPrev.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateUI();
+                    updateURL();
+                }
+            });
+
+            btnNext.addEventListener('click', () => {
+                if (currentIndex < timelineData.length - 1) {
+                    currentIndex++;
+                    updateUI();
+                    updateURL();
+                }
+            });
+
+            window.addEventListener('popstate', () => {
+                checkURL();
+                updateUI();
+            });
+
+            // Initial Load
+            checkURL();
+            initTimelineNodes();
+            updateUI();
+        });
+    </script>
 </body>
 
 </html>

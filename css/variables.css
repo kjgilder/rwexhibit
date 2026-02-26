@@ -41,4 +41,11 @@
     /* Layout */
     --container-max-width: 100%;
     --header-height: 80px;
+
+    /* Extra Colors for Timeline */
+    --color-accent-blue: #2F6BFB;
+    --color-accent-blue-bg: #F0F5FF;
+    --color-gold-bg: #FDFBF7;
+    --color-border-light: #E0E0E0;
+    --color-surface: #FFFFFF;
 }
