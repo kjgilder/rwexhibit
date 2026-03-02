@@ -1074,13 +1074,15 @@ details>summary {
 }
 
 /* Context List Styles */
-.context-list {
+.context-list,
+.context-list-sage {
     list-style: none;
     margin: var(--spacing-sm) 0;
     padding: 0;
 }
 
-.context-list li {
+.context-list li,
+.context-list-sage li {
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -1139,23 +1141,23 @@ details>summary {
 }
 
 /* Override default summary +/- for timeline */
-.accordion-custom summary::after {
+.accordion-custom summary::after,
+.accordion-custom[open] summary::after {
     content: '';
+    display: none;
 }
 
 .accordion-custom .chevron {
-    width: 12px;
-    height: 12px;
-    border-right: 2px solid var(--text-color);
-    border-bottom: 2px solid var(--text-color);
-    transform: rotate(45deg);
-    transition: transform 0.3s;
-    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease;
 }
 
 .accordion-custom[open]>summary>.chevron {
-    transform: rotate(-135deg);
-    margin-top: 6px;
+    transform: rotate(180deg);
 }
 
 .accordion-custom .details-content {
