@@ -799,8 +799,8 @@ details>summary {
     fill: currentColor;
 }
 
-.icon-blue {
-    background-color: var(--color-accent-blue);
+.icon-sky {
+    background-color: var(--color-accent-sky);
 }
 
 /* Gold Accordion Variant */
@@ -821,20 +821,20 @@ details>summary {
     background-color: var(--color-gold-bg);
 }
 
-/* Blue Accordion Variant */
-.accordion-blue {
-    border-left: 8px solid var(--color-accent-blue);
+/* Sky Accordion Variant */
+.accordion-sky {
+    border-left: 8px solid var(--color-accent-sky);
 }
 
-.accordion-blue summary {
+.accordion-sky summary {
     background-color: var(--color-surface);
 }
 
-.accordion-blue summary:hover {
-    background-color: var(--color-accent-blue-bg);
+.accordion-sky summary:hover {
+    background-color: var(--color-accent-sky-bg);
 }
 
-.accordion-blue .details-content {
+.accordion-sky .details-content {
     border-top: none;
     /* Figma shows no line inside context box */
 }
@@ -921,16 +921,16 @@ details>summary {
     margin-bottom: var(--spacing-md);
 }
 
-.context-card-blue {
-    background-color: #F0F5FF;
+.context-card-sky {
+    background-color: var(--color-accent-sky-bg);
 }
 
 .context-card-yellow {
     background-color: #FFFDF0;
 }
 
-.context-card-green {
-    background-color: #F0FAF0;
+.context-card-sage {
+    background-color: var(--color-accent-sage-bg);
 }
 
 /* Inner Nested Cards */
@@ -959,13 +959,13 @@ details>summary {
     margin-bottom: 0;
 }
 
-.inner-card-highlight-green {
+.inner-card-highlight-sage {
     background-color: var(--color-primary-white);
     border-radius: 8px;
     padding: var(--spacing-md);
     margin-top: var(--spacing-sm);
     border: 1px solid var(--color-border-light);
-    border-left: 6px solid #28a745;
+    border-left: 6px solid var(--color-accent-sage);
 }
 
 /* Typography & Utility Overrides for Context Area */
@@ -1052,17 +1052,17 @@ details>summary {
     border: 1px solid var(--color-border-light);
 }
 
-.border-left-green {
+.border-left-sage {
     border: 1px solid var(--color-border-light);
-    border-left: 6px solid #28a745;
+    border-left: 6px solid var(--color-accent-sage);
 }
 
 .padding-16 {
     padding: 16px;
 }
 
-.bg-blue-light {
-    background-color: #E6EEF8;
+.bg-sky-light {
+    background-color: var(--color-accent-sky-bg);
 }
 
 .no-shadow {
@@ -1090,15 +1090,15 @@ details>summary {
 
 .context-list li::before {
     content: "•";
-    color: var(--color-accent-blue);
+    color: var(--color-accent-sky);
     font-weight: bold;
     font-size: 1.2rem;
     line-height: 1;
 }
 
-.context-list-green li::before {
+.context-list-sage li::before {
     content: "→";
-    color: #28a745;
+    color: var(--color-accent-sage);
     font-weight: bold;
     font-size: 1rem;
     margin-right: 4px;
@@ -1123,7 +1123,7 @@ details>summary {
 .context-list-bank li svg {
     width: 16px;
     height: 16px;
-    color: var(--color-accent-blue);
+    color: var(--color-accent-sky);
     flex-shrink: 0;
 }
 
@@ -1316,7 +1316,7 @@ details>summary {
 
     .inner-card,
     .inner-card-highlight,
-    .inner-card-highlight-green {
+    .inner-card-highlight-sage {
         padding: 12px;
         margin-top: 8px;
     }
