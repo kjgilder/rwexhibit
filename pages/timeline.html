@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exhibit Timeline - Roger Williams Exhibit</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../css/variables.css">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css?v=3">
     <style>
         /* Timeline specific overrides */
         .timeline-section h2 {
@@ -113,14 +116,211 @@
         </div>
     </footer>
 
-    <script src="../js/main.js"></script>
+    <!-- Global Image Modal -->
+    <dialog id="image-modal" class="image-modal">
+        <button id="close-image-modal" class="modal-close" aria-label="Close image">&times;</button>
+        <img id="modal-image" src="" alt="Enlarged view">
+    </dialog>
+
+    <script src="../js/main.js?v=2"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const timelineData = [
                 { year: "", wall: "Wall 1", title: "Reclaiming the Record: Roger Williams University & Nashville's African American Educational Heritage", contextPlaceholder: "1833-1836", galleryText: "<p>In the aftermath of slavery, Nashville emerged as a vital center for African American education. Black residents and northern missionaries built schools that advanced literacy, leadership, and self-determination. From early classrooms to colleges, their work laid the foundation for generations of educators who understood that learning was central to both freedom and the progress of communities.</p>" },
                 { year: "1833", wall: "Wall 1", title: "First Black School in Nashville", contextPlaceholder: "1833-1836", galleryText: "<p>Alphonso Sumner, a free Black barber, organizes Nashville's first “school” for Black children—a collection of classes that preceded white missionaries’ efforts by three decades. These classes operated intermittently, running only a few months each year due to periodic outbreaks of cholera and smallpox. However, these efforts ended abruptly after Sumner was accused of writing letters to a local fugitive slave in the North—he received a public whipping and was forced to close the school and flee to Cincinnati.</p>" },
                 { year: "1836", wall: "Wall 1", title: "Growth of Native Black Schools", contextPlaceholder: "1836-1863", galleryText: "<p>Following Sumner's efforts to educate Black children, free Blacks quietly petitioned Nashville authorities to reopen the classes. These renewed educational efforts were led by John Yardley, a white man from Wilson County. When Yardley departed, his assistant teacher, Daniel Wadkis, took over and continued the classes. The first classes reopened on January 9th and operated discreetly, shifting from one location to another to avoid drawing unwanted attention.</p>" },
-                { year: "1864", wall: "Wall 1", title: "Nashville Normal and Theological Institute", contextPlaceholder: "1864-1866", galleryText: "<p>The “African Mission” of Spring Street (Central) Baptist Church brought together free Black ministers Randal B. Vandavall and Nelson G. Merry and white missionary Reverend Daniel W. Williams. What began as classes for new and experienced ministers, \"Negro Baptist College\" became the Nashville Institute with nearly $88,000 raised by Merry, Phillips, and Vandavall from local and Northern benefactors. Later, the American Baptist Home Mission Society (ABHMS) continued to support.</p>" },
+                {
+                    year: "1864", wall: "Wall 1", title: "Nashville Normal and Theological Institute", contextHTML: `
+                <div class="accordion-nested-container">
+                    <details class="accordion-custom accordion-nested">
+                        <summary>
+                            <div class="summary-inner">
+                                <span class="icon-circle-svg icon-blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+                                </span>
+                                <h4>Founding Vision</h4>
+                            </div>
+                            <span class="chevron"></span>
+                        </summary>
+                        <div class="details-content">
+                            <!-- ImagePlaceholder -->
+                            <img src="../assets/timeline-placeholder.png" alt="Founding Vision placeholder" class="context-img">
+                            
+                            <div class="context-card context-card-blue">
+                                <h5>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="var(--color-accent-blue)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
+                                    Training Leaders for Freedom
+                                </h5>
+                                <p>Roger Williams University began with a clear purpose: to train ministers and teachers who would serve newly freed Black communities across the South.</p>
+                                <p>Education was not just about literacy &mdash; it was about leadership. Churches and classrooms became spaces where freedom was organized, sustained, and passed forward.</p>
+                                
+                                <div class="inner-card no-shadow">
+                                    <p class="font-weight-600">The founders envisioned an institution that would prepare graduates to:</p>
+                                    <ul class="context-list">
+                                        <li>Lead congregations</li>
+                                        <li>Establish schools</li>
+                                        <li>Strengthen Black civic life during Reconstruction</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="accordion-custom accordion-nested">
+                        <summary>
+                            <div class="summary-inner">
+                                <span class="icon-circle-svg icon-blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                                </span>
+                                <h4>The Founders</h4>
+                            </div>
+                            <span class="chevron"></span>
+                        </summary>
+                        <div class="details-content" style="padding-bottom: 0;">
+                            
+                            <details class="accordion-sub">
+                                <summary>
+                                    <div class="summary-inner">
+                                        <h4>Reverend Randal B. Vandavall</h4>
+                                        <span>1832&ndash;?</span>
+                                    </div>
+                                    <span class="chevron"></span>
+                                </summary>
+                                <div class="details-content">
+                                    <img src="../assets/vandavall.jpeg" alt="R. B. Vandervall" class="thumbnail-img-inline">
+                                    <ul class="context-list mt-0 pt-0">
+                                        <li>Born enslaved at Neely's Bend near Nashville</li>
+                                        <li>Became pastor of the "African Mission" at Spring Street Baptist Church in 1862</li>
+                                        <li>Co-founded the institution and later served as trustee</li>
+                                    </ul>
+                                    <div class="inner-card-highlight">
+                                        <p class="font-italic text-secondary">Vandavall's life traced the arc from enslavement to institutional leadership &mdash; a transformation mirrored in the university itself.</p>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="accordion-sub">
+                                <summary>
+                                    <div class="summary-inner">
+                                        <h4>Reverend Nelson G. Merry</h4>
+                                        <span>1824&ndash;?</span>
+                                    </div>
+                                    <span class="chevron"></span>
+                                </summary>
+                                <div class="details-content">
+                                    <img src="../assets/nelson_g_merry.jpeg" alt="Nelson G. Merry" class="thumbnail-img-inline">
+                                    <ul class="context-list mt-0 pt-0">
+                                        <li>Freed in 1845</li>
+                                        <li>Became the first ordained Black minister in Nashville in 1853</li>
+                                        <li>Grew the First Colored Baptist Church to over 2,000 members</li>
+                                    </ul>
+                                    <div class="inner-card border-light padding-16 mt-16">
+                                        <p>Merry helped establish multiple churches in Nashville. His original congregation eventually divided into three enduring churches:</p>
+                                        <ul class="context-list-bank">
+                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> First Baptist Church, Capitol Hill</li>
+                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> Spruce Street Baptist Church</li>
+                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> Mount Olive Missionary Baptist Church</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="accordion-sub">
+                                <summary>
+                                    <div class="summary-inner">
+                                        <h4>Dr. Daniel W. Phillips</h4>
+                                        <span>1809&ndash;1890</span>
+                                    </div>
+                                    <span class="chevron"></span>
+                                </summary>
+                                <div class="details-content">
+                                    <img src="../assets/daniel_w_phillips.jpg" alt="Dr. D. W. Phillips" class="thumbnail-img-inline">
+                                    <ul class="context-list mt-0 pt-0">
+                                        <li>Massachusetts missionary and pastor of Central Baptist Church</li>
+                                        <li>Taught classes for Black ministers in his home</li>
+                                        <li>Raised funds with educator Z.C. Rush</li>
+                                        <li>Purchased early property near Fort Gillem for the growing school</li>
+                                    </ul>
+                                    <div class="inner-card-highlight">
+                                        <p class="font-italic text-secondary">Phillips connected northern philanthropy with local Black leadership &mdash; a partnership that defined the institution's early years.</p>
+                                    </div>
+                                </div>
+                            </details>
+
+                        </div>
+                    </details>
+
+                    <details class="accordion-custom accordion-nested">
+                        <summary>
+                            <div class="summary-inner">
+                                <span class="icon-circle-svg icon-blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg>
+                                </span>
+                                <h4>A Basement Classroom (1865)</h4>
+                            </div>
+                            <span class="chevron"></span>
+                        </summary>
+                        <div class="details-content">
+                            <div class="context-card context-card-yellow">
+                                <p class="font-weight-500">In 1865, Reverend Nelson Merry allowed Daniel Phillips to hold classes in the basement of the First Colored Mission.</p>
+                                <p>What began as informal theological instruction became the foundation for a permanent freedmen's school.</p>
+                                
+                                <div class="inner-card-highlight">
+                                    <p class="font-size-95">That same year, the <strong>Freedmen's Bureau</strong> was created by Congress (March 3, 1865) within the U.S. War Department. It oversaw education, labor contracts, and aid for formerly enslaved people &mdash; helping make schools like this possible.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details class="accordion-custom accordion-nested">
+                        <summary>
+                            <div class="summary-inner">
+                                <span class="icon-circle-svg icon-blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                                </span>
+                                <h4>A Growing Educational Network</h4>
+                            </div>
+                            <span class="chevron"></span>
+                        </summary>
+                        <div class="details-content">
+                            <div class="context-card context-card-green">
+                                <p>Roger Williams University did not emerge alone. It was part of a rapidly expanding Black educational movement in Nashville:</p>
+                                
+                                <div class="inner-card border-left-green mb-12 padding-16">
+                                    <h5>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="#28a745"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
+                                        Central Tennessee College (1865)
+                                    </h5>
+                                    <img src="../assets/central_tennessee_college.jpg" alt="Central Tennessee College" class="thumbnail-img-inline">
+                                    <p class="font-size-90 text-secondary mb-8 mt-0 pt-0">Founded by the Methodist Episcopal Church</p>
+                                    <p class="font-size-90 mb-4">Later evolved into:</p>
+                                    <ul class="context-list-green">
+                                        <li>Walden University</li>
+                                        <li>Meharry Medical College</li>
+                                        <li>Kent College of Law</li>
+                                    </ul>
+                                    <div class="cb"></div>
+                                </div>
+
+                                <div class="inner-card border-left-green mb-16 padding-16">
+                                    <h5>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="#28a745"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
+                                        Fisk Free Colored School (1866)
+                                    </h5>
+                                    <img src="../assets/fisk_free_colored_school.jpg" alt="Fisk Free Colored School" class="thumbnail-img-inline">
+                                    <p class="font-size-90 text-secondary mb-4 mt-0 pt-0">Founded in 1866</p>
+                                    <p class="font-size-90">Became <strong>Fisk University</strong> in 1867</p>
+                                    <div class="cb"></div>
+                                </div>
+                                
+                                <div class="inner-card bg-blue-light no-shadow padding-16 border-radius-8">
+                                    <p class="font-italic font-size-95">Together, these institutions positioned Nashville as a center for Black higher education in the Reconstruction South.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>`, galleryText: "<p>The “African Mission” of Spring Street (Central) Baptist Church brought together free Black ministers Randal B. Vandavall and Nelson G. Merry and white missionary Reverend Daniel W. Williams. What began as classes for new and experienced ministers, \"Negro Baptist College\" became the Nashville Institute with nearly $88,000 raised by Merry, Phillips, and Vandavall from local and Northern benefactors. Later, the American Baptist Home Mission Society (ABHMS) continued to support.</p>"
+                },
                 { year: "1867", wall: "Wall 1", title: "The Paradox of Reconstruction on Education", contextPlaceholder: "1867-1873", galleryText: "<p>In 1867, Tennessee passed a law to create public schools for formerly enslaved citizens. Plans were underway for the Nashville Normal and Theological Institute to begin with nearby Fisk University and Central Tennessee College. Within these institutions, the focus of education ranged from basic training to career development of ministers and teachers. By 1870, the Reconstruction efforts, including the Freedmen's Bureau, dissolved. Tennessee’s 1867 law was repealed, leaving new schools vulnerable.</p>" },
                 { year: "1874", wall: "Wall 1", title: "Land & Investments", contextPlaceholder: "1874-1880", galleryText: "<p>Roger Williams University operated from two significant locations during its history: Near Fort Gillem, Reverend Daniel Phillips purchased property at the corner of Park and Polk Streets, including a two-story building that housed classrooms, a chapel and a library. Sold in 1876, the building became the Knowles Street School and later the Pearl School. Hillsboro Pike: In 1873-74, Black businessmen Henry Harding and Abram Smith helped university leaders acquire 30 acres of the W.H. Gordon plantation between Vanderbilt and Belmont mansion. The university expanded the existing Gordon Home (renamed Mansion House) and built Centennial Hall.</p>" },
                 { year: "1881", wall: "Wall 1", title: "Cultivating Professionals From Across the Country", contextPlaceholder: "1881-1884", galleryText: "<p>The diverse student body of RWU came from all across the South. Most hailed from Tennessee and neighboring states. Many traveled from as far as Chicago, New Orleans, and Indian Territory (present-day Oklahoma). RWU offered instruction for three pathways: collegiate, normal (teacher), and theological. Courses included mathematics, sciences, languages, music, and vocational training.</p>" },
@@ -268,7 +468,9 @@
                     galleryContent.innerHTML = `<p>[ENTER GALLERY TEXT HERE]</p>`;
                 }
 
-                if (item.contextPlaceholder) {
+                if (item.contextHTML) {
+                    contextContent.innerHTML = item.contextHTML;
+                } else if (item.contextPlaceholder) {
                     contextContent.innerHTML = `<p>[ENTER CONTENT HERE - ${item.contextPlaceholder}]</p>`;
                 } else {
                     contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;

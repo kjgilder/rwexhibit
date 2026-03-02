@@ -78,8 +78,21 @@
 
     <div class="device-container">
         <div class="notch"></div>
-        <iframe src="index.html"></iframe>
+        <iframe id="preview-frame" src="index.html"></iframe>
     </div>
+
+    <script>
+        // Forward URL parameters (e.g. ?year=1864) from this simulator container directly into the iframe target
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const iframe = document.getElementById('preview-frame');
+
+            if (params.has('year')) {
+                // If a year is specified, jump directly to the timeline page for that year
+                iframe.src = `pages/timeline.html?year=${params.get('year')}`;
+            }
+        });
+    </script>
 
 </body>
 
