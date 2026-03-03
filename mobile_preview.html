@@ -89,7 +89,7 @@
 
             if (params.has('year')) {
                 // If a year is specified, jump directly to the timeline page for that year
-                iframe.src = `pages/timeline.html?year=${params.get('year')}`;
+                iframe.src = `pages/timeline.html?year=${params.get('year')}&v=${Date.now()}`;
             }
         });
     </script>
