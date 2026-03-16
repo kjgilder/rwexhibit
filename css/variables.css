@@ -41,4 +41,13 @@
     /* Layout */
     --container-max-width: 100%;
     --header-height: 80px;
+
+    /* Extra Colors for Timeline */
+    --color-accent-sky: #B3C9CD;
+    --color-accent-sky-bg: #F2F5F6;
+    --color-accent-sage: #8BA18E;
+    --color-accent-sage-bg: #EFF3F0;
+    --color-gold-bg: #FDFBF7;
+    --color-border-light: #E0E0E0;
+    --color-surface: #FFFFFF;
 }
