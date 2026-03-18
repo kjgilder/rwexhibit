@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recently Added Material - Roger Williams Exhibit</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/recently-added.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="../index.html" class="header-branding" style="text-decoration: none;">
+                <img src="../assets/dimensional-v-white.png" alt="Vanderbilt University" class="header-lockup">
+                <div class="header-separator"></div>
+                <div class="header-sub-text">Peabody Library | Roger Williams Exhibit</div>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="timeline.html">Explore Timeline</a></li>
+                    <li><a href="recently-added.html">Recently Added Material</a></li>
+                    <li><a href="about.html">About the Exhibit</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container section">
+        <div class="timeline-header">
+            <h1>Recently Added Material</h1>
+            <p class="timeline-subtitle">Explore the newest additions to the exhibit collection.</p>
+        </div>
+
+        <!-- Admin Upload Section (Hidden by default) -->
+        <section id="admin-section" class="admin-section hidden">
+            <div class="panel-card" style="border-left-color: var(--color-primary-gold);">
+                <h3 class="panel-title" style="margin-top: 0; margin-bottom: 1rem;">Add New Material</h3>
+                <form id="upload-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="material-title">Title</label>
+                        <input type="text" id="material-title" name="title" required placeholder="Enter a descriptive title">
+                    </div>
+                    <div class="form-group">
+                        <label for="material-image">Image or Document File</label>
+                        <input type="file" id="material-image" name="image" accept="image/*, application/pdf" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="upload-btn">Upload Material</button>
+                    <div id="upload-status" class="status-message"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Materials Grid -->
+        <section class="materials-grid" id="materials-container">
+            <div class="loading-spinner">Loading materials...</div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.4;">
+                <a href="#" id="admin-login-trigger" class="admin-link-text" style="text-decoration: none; color: inherit;">Admin</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Global Image Modal -->
+    <dialog id="image-modal" class="image-modal">
+        <button id="close-image-modal" class="modal-close" aria-label="Close image">&times;</button>
+        <img id="modal-image" src="" alt="Enlarged view">
+    </dialog>
+
+    <!-- Login Modal -->
+    <dialog id="login-modal" class="site-dialog">
+        <div class="dialog-inner">
+            <h2 style="color: var(--color-primary-black); font-size: 1.5rem; margin-bottom: 1rem;">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+                    <label for="login-email" style="display: block; margin-bottom: 0.5rem;">Email</label>
+                    <input type="email" id="login-email" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-primary-gold); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+                    <label for="login-password" style="display: block; margin-bottom: 0.5rem;">Password</label>
+                    <input type="password" id="login-password" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-primary-gold); border-radius: 4px;">
+                </div>
+                <p id="login-error" style="color: #d32f2f; font-size: 0.9rem; margin-bottom: 1rem; display: none;">Login not available. Please access all information about Roger Williams on this website.</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="submit" class="btn-primary" style="background-color: var(--color-primary-gold); color: white; border: none; padding: 10px 24px; font-family: var(--font-heading); cursor: pointer; border-radius: 4px;">Login</button>
+                    <button type="button" id="close-login-dialog" class="btn-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/recently-added.js"></script>
+</body>
+
+</html>
