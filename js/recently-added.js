@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Attach delete event listeners
-        if (isAdmin) {
+        if (sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true') {
             document.querySelectorAll('.btn-delete').forEach(btn => {
                 btn.addEventListener('click', handleDelete);
             });
@@ -215,30 +215,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Delete Logic ---
-    function handleDelete(e) {
-        const id = e.target.getAttribute('data-id');
-        if (!id) return;
+    const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+    console.log("Delete modal found:", deleteConfirmModal);
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    let materialIdToDelete = null;
 
-        if (confirm("Are you sure you want to delete this material? This cannot be undone.")) {
-            // Optimistic deletion (could add a generic spinner if needed)
-            const card = e.target.closest('.material-card');
-            if (card) card.style.opacity = '0.5';
+    if (cancelDeleteBtn && deleteConfirmModal) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteConfirmModal.close();
+        });
+    }
 
-            fetch(`/api/materials/${id}`, {
+    if (confirmDeleteBtn && deleteConfirmModal) {
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (!materialIdToDelete) return;
+
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.textContent = 'Deleting...';
+
+            fetch(`/api/materials/${materialIdToDelete}`, {
                 method: 'DELETE'
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Delete failed');
-                }
-                loadMaterials(); // Refresh list to get accurate state
+                if (!response.ok) throw new Error('Delete failed');
+                loadMaterials();
+                deleteConfirmModal.close();
             })
             .catch(error => {
                 console.error('Delete Error:', error);
                 alert("Failed to delete material.");
-                if (card) card.style.opacity = '1';
+            })
+            .finally(() => {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = 'Delete';
+                materialIdToDelete = null;
             });
-        }
+        });
+    }
+
+    function handleDelete(e) {
+        const id = e.currentTarget.getAttribute('data-id');
+        if (!id || !deleteConfirmModal) return;
+
+        materialIdToDelete = id;
+        deleteConfirmModal.showModal();
     }
 
     // --- Global Image Modal Overlay Overrides ---

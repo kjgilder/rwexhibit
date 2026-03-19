@@ -174,5 +174,18 @@
 @media (max-width: 600px) {
     .materials-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .material-image-container {
+        height: 180px;
+    }
+
+    .material-title {
+        font-size: 1.25rem;
+    }
+
+    .material-content {
+        padding: var(--spacing-sm);
     }
 }

@@ -3,9 +3,8 @@ import socketserver
 import json
 import os
 import uuid
-from urllib.parse import urlparse, parse_qs
-import cgi
-import shutil
+from urllib.parse import urlparse
+import email.message
 
 PORT = 8000
 DATA_FILE = "data/materials.json"
@@ -53,67 +52,94 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         
         if parsed_path.path == '/api/materials':
-            # Parse the multipart form data
-            ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
-            if ctype == 'multipart/form-data':
-                pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
-                
-                # Use FieldStorage to parse the form
-                form = cgi.FieldStorage(
-                    fp=self.rfile, 
-                    headers=self.headers,
-                    environ={'REQUEST_METHOD': 'POST',
-                            'CONTENT_TYPE': self.headers['Content-Type'],
-                            }
-                )
-                
-                if 'title' not in form or 'image' not in form:
-                    self._set_headers(400)
-                    self.wfile.write(json.dumps({"error": "Missing title or image"}).encode('utf-8'))
-                    return
-                    
-                title = form['title'].value
-                fileitem = form['image']
-                
-                if fileitem.filename:
-                    # Generate unique ID and secure filename
-                    material_id = str(uuid.uuid4())
-                    _, ext = os.path.splitext(fileitem.filename)
-                    secure_filename = f"{material_id}{ext}"
-                    filepath = os.path.join(UPLOAD_DIR, secure_filename)
-                    
-                    # Save the file
-                    with open(filepath, 'wb') as f:
-                        f.write(fileitem.file.read())
-                        
-                    # Save metadata
-                    new_item = {
-                        "id": material_id,
-                        "title": title,
-                        "imagePath": f"{UPLOAD_DIR}/{secure_filename}",
-                        "timestamp": int(os.path.getmtime(filepath)) # Use file time
-                    }
-                    
-                    try:
-                        with open(DATA_FILE, 'r') as f:
-                            materials = json.load(f)
-                        
-                        materials.insert(0, new_item) # Add to front
-                        
-                        with open(DATA_FILE, 'w') as f:
-                            json.dump(materials, f, indent=4)
-                            
-                        self._set_headers(201)
-                        self.wfile.write(json.dumps(new_item).encode('utf-8'))
-                    except Exception as e:
-                        self._set_headers(500)
-                        self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-                else:
-                    self._set_headers(400)
-                    self.wfile.write(json.dumps({"error": "No file uploaded"}).encode('utf-8'))
-            else:
+            content_type = self.headers.get('Content-Type')
+            if not content_type or 'multipart/form-data' not in content_type:
                 self._set_headers(400)
                 self.wfile.write(json.dumps({"error": "Invalid content type"}).encode('utf-8'))
+                return
+
+            # Parse boundary
+            msg = email.message.Message()
+            msg['Content-Type'] = content_type
+            boundary = msg.get_param('boundary')
+            if not boundary:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"error": "No boundary in content type"}).encode('utf-8'))
+                return
+            
+            # Read and parse body
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
+            
+            # Split by boundary
+            # Boundary in Content-Type is 'boundary', but in body it's '--boundary'
+            parts = body.split(b'--' + boundary.encode())
+            
+            title = None
+            image_data = None
+            filename = None
+
+            for part in parts:
+                if not part or part.strip() == b'--' or part.strip() == b'':
+                    continue
+                
+                header_part, _, data = part.partition(b'\r\n\r\n')
+                header_part = header_part.lstrip()
+                
+                headers = email.message_from_bytes(header_part)
+                disposition = headers.get('Content-Disposition', '')
+                
+                params = {}
+                for param in disposition.split(';'):
+                    if '=' in param:
+                        k, v = param.strip().split('=', 1)
+                        params[k] = v.strip('"')
+                
+                name = params.get('name')
+                
+                if name == 'title':
+                    title = data.strip().decode('utf-8')
+                elif name == 'image':
+                    filename = params.get('filename')
+                    image_data = data.rstrip(b'\r\n')
+
+            if not title or not image_data or not filename:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"error": f"Missing fields: title={bool(title)}, image={bool(image_data)}, filename={bool(filename)}"}).encode('utf-8'))
+                return
+            
+            # Generate unique ID and secure filename
+            material_id = str(uuid.uuid4())
+            _, ext = os.path.splitext(filename)
+            secure_filename = f"{material_id}{ext}"
+            filepath = os.path.join(UPLOAD_DIR, secure_filename)
+            
+            # Save the file
+            with open(filepath, 'wb') as f:
+                f.write(image_data)
+                
+            # Save metadata
+            new_item = {
+                "id": material_id,
+                "title": title,
+                "imagePath": f"{UPLOAD_DIR}/{secure_filename}",
+                "timestamp": int(os.path.getmtime(filepath))
+            }
+            
+            try:
+                with open(DATA_FILE, 'r') as f:
+                    materials = json.load(f)
+                
+                materials.insert(0, new_item)
+                
+                with open(DATA_FILE, 'w') as f:
+                    json.dump(materials, f, indent=4)
+                    
+                self._set_headers(201)
+                self.wfile.write(json.dumps(new_item).encode('utf-8'))
+            except Exception as e:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
             return
 
     def do_DELETE(self):
