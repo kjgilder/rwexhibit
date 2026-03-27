@@ -135,428 +135,37 @@
     </dialog>
 
     <script src="../js/main.js?v=2"></script>
+    <script src="timeline-content.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const timelineData = [
-                { year: "", wall: "Wall 1", title: "Reclaiming the Record: Roger Williams University & Nashville's African American Educational Heritage", contextPlaceholder: "1833-1836", galleryText: "<p>In the aftermath of slavery, Nashville emerged as a vital center for African American education. Black residents and northern missionaries built schools that advanced literacy, leadership, and self-determination. From early classrooms to colleges, their work laid the foundation for generations of educators who understood that learning was central to both freedom and the progress of communities.</p>" },
-                { year: "1833", wall: "Wall 1", title: "First Black School in Nashville", contextPlaceholder: "1833-1836", galleryText: "<p>Alphonso Sumner, a free Black barber, organizes Nashville's first “school” for Black children—a collection of classes that preceded white missionaries’ efforts by three decades. These classes operated intermittently, running only a few months each year due to periodic outbreaks of cholera and smallpox. However, these efforts ended abruptly after Sumner was accused of writing letters to a local fugitive slave in the North—he received a public whipping and was forced to close the school and flee to Cincinnati.</p>" },
+                { year: "", wall: "Wall 1", title: "Reclaiming the Record: Roger Williams University & Nashville's African American Educational Heritage", contextFile: "timeline-content/intro.html", galleryText: "<p>In the aftermath of slavery, Nashville emerged as a vital center for African American education. Black residents and northern missionaries built schools that advanced literacy, leadership, and self-determination. From early classrooms to colleges, their work laid the foundation for generations of educators who understood that learning was central to both freedom and the progress of communities.</p>" },
+                { year: "1833", wall: "Wall 1", title: "First Black School in Nashville", contextFile: "timeline-content/1833.html", galleryText: "<p>Alphonso Sumner, a free Black barber, organizes Nashville's first “school” for Black children—a collection of classes that preceded white missionaries’ efforts by three decades. These classes operated intermittently, running only a few months each year due to periodic outbreaks of cholera and smallpox. However, these efforts ended abruptly after Sumner was accused of writing letters to a local fugitive slave in the North—he received a public whipping and was forced to close the school and flee to Cincinnati.</p>" },
                 {
-                    year: "1836", wall: "Wall 1", title: "Growth of Native Black Schools", contextHTML: `
-                <div class="accordion-nested-container">
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg>
-                                </span>
-                                <h4>Secret Continuation of Education</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <img src="../assets/colored_petition_ed.jpg" alt="Colored Petition on Repeal of Education Laws" class="thumbnail-img-inline">
-                                <p>After Alphonso Sumner's school was shut down, education did not disappear in Nashville's Black community. Local residents and sympathetic teachers continued organizing lessons quietly, often in private homes and temporary locations.</p>
-                                <p class="font-weight-600>These underground efforts kept the flame of literacy alive even under the threat of legal punishment.</p>
-                                <div class="cb"></div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                                </span>
-                                <h4>Education Under Legal Restriction</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <img src="../assets/freedman_amendment.jpg" alt="Freedman Amendment ca. 1865" class="thumbnail-img-inline">
-                                <p>Before the Civil War, laws throughout the South prohibited teaching enslaved people to read or write. Despite these restrictions, Nashville's free Black community persisted in seeking educational opportunities for children, often relying on informal networks and discreet instruction.</p>
-                                <p class="font-weight-600">These efforts created an educational foundation that missionary schools would later build upon during Reconstruction.</p>
-                                <div class="cb"></div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-                                </span>
-                                <h4>Union Occupation and New Possibilities</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>With Union occupation came new possibilities. When Union forces occupied Nashville in 1862, the city became one of the first places in the Confederacy where education for formerly enslaved people could take place more openly.</p>
-
-                                <div class="inner-card border-left-sage mb-12 padding-16">
-                                    <h5>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-                                        Federal Control Opens the Door
-                                    </h5>
-                                    <img src="../assets/freedmans_bureau_1868.jpg" alt="Freedmen's Bureau, July 1868" class="thumbnail-img-inline">
-                                    <p class="font-size-90">Federal control allowed missionaries, churches, and aid organizations to begin organizing more formal schools for Black students.</p>
-                                    <div class="cb"></div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-                                </span>
-                                <h4>Joseph G. McKee and Early Missionary Schools</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <img src="../assets/fisk_free_colored_school_2.jpg" alt="Fisk Free Colored School" class="thumbnail-img-inline">
-                                <p>On October 13, 1863, the first formal white-led colored school in Nashville opened under the leadership of Joseph G. McKee. The school was supported by the United Presbyterian Church and the Western Freedmen's Aid Commission.</p>
-                                <p class="font-weight-600">This effort marked a pivotal moment in the transition from informal schooling to organized missionary education.</p>
-                                <div class="cb"></div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/></svg>
-                                </span>
-                                <h4>Education and the Coming of Emancipation</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>The Emancipation Proclamation of 1863 marked a turning point for African American education across the South. For Black communities, education became central to defining freedom and claiming civil rights.</p>
-                                <p>In the years that followed, hundreds of schools were founded, reflecting a widespread belief that literacy and learning were essential tools for political participation and community leadership.</p>
-                            </div>
-                        </div>
-                    </details>
-                </div>`, galleryText: "<p>Following Sumner's efforts to educate Black children, free Blacks quietly petitioned Nashville authorities to reopen the classes. These renewed educational efforts were led by John Yardley, a white man from Wilson County. When Yardley departed, his assistant teacher, Daniel Wadkis, took over and continued the classes. The first classes reopened on January 9th and operated discreetly, shifting from one location to another to avoid drawing unwanted attention.</p>"
+                    year: "1836", wall: "Wall 1", title: "Growth of Native Black Schools", contextFile: "timeline-content/1836.html", galleryText: "<p>Following Sumner's efforts to educate Black children, free Blacks quietly petitioned Nashville authorities to reopen the classes. These renewed educational efforts were led by John Yardley, a white man from Wilson County. When Yardley departed, his assistant teacher, Daniel Wadkis, took over and continued the classes. The first classes reopened on January 9th and operated discreetly, shifting from one location to another to avoid drawing unwanted attention.</p>"
                 },
                 {
-                    year: "1864", wall: "Wall 1", title: "Nashville Normal and Theological Institute", contextHTML: `
-                <div class="accordion-nested-container">
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                                </span>
-                                <h4>Founding Vision</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            
-                            <div class="context-card context-card-sky">
-                                <h5>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="var(--color-accent-sky)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
-                                    Training Leaders for Freedom
-                                </h5>
-                                <p>Roger Williams University began with a clear purpose: to train ministers and teachers who would serve newly freed Black communities across the South. Education was not just about literacy, but about leadership. Churches and classrooms became spaces where freedom was organized, sustained, and passed forward.</p>
-                                
-                                <p class="font-weight-600">The founders envisioned an institution that would prepare graduates to lead congregations, establish schools, and strengthen Black civic life during Reconstruction.</p>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                                </span>
-                                <h4>The Founders</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content" style="padding-bottom: 0;">
-                            
-                            <details class="accordion-sub">
-                                <summary>
-                                    <div class="summary-inner">
-                                        <h4>Reverend Randal B. Vandavall</h4>
-                                        <span>1832&ndash;1898</span>
-                                    </div>
-                                    <span class="chevron"></span>
-                                </summary>
-                                <div class="details-content">
-                                    <img src="../assets/vandavall.jpeg" alt="R. B. Vandervall" class="thumbnail-img-inline">
-                                    <ul class="context-list mt-0 pt-0">
-                                        <li>Born enslaved at Neely's Bend near Nashville, Vandavall rose to become pastor of the "African Mission" at Spring Street Baptist Church in 1862</li>
-                                        <li>He later co-founded the institution and served as a trustee, embodying a remarkable journey from enslavement to institutional leadership</li>
-                                        <li>His life reflects a broader transformation that parallels the evolution of the university itself</li>
-                                    </ul>
-                                </div>
-                            </details>
-
-                            <details class="accordion-sub">
-                                <summary>
-                                    <div class="summary-inner">
-                                        <h4>Reverend Nelson G. Merry</h4>
-                                        <span>1824&ndash;1884</span>
-                                    </div>
-                                    <span class="chevron"></span>
-                                </summary>
-                                <div class="details-content">
-                                    <img src="../assets/nelson_g_merry.jpeg" alt="Nelson G. Merry" class="thumbnail-img-inline">
-                                    <ul class="context-list mt-0 pt-0">
-                                        <li>Freed in 1845, Merry became the first ordained Black minister in Nashville in 1853 and grew the First Colored Baptist Church to more than 2,000 members</li>
-                                        <li>He also helped establish multiple churches across the city</li>
-                                    </ul>
-                                    <div class="inner-card border-left-sage padding-16 mt-16">
-                                        <p>His original congregation eventually divided into three enduring institutions:</p>
-                                        <ul class="context-list-bank">
-                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> First Baptist Church, Capitol Hill</li>
-                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> Spruce Street Baptist Church</li>
-                                            <li><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z"/></svg> Mount Olive Missionary Baptist Church</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </details>
-
-                            <details class="accordion-sub">
-                                <summary>
-                                    <div class="summary-inner">
-                                        <h4>Dr. Daniel W. Phillips</h4>
-                                        <span>1809&ndash;1890</span>
-                                    </div>
-                                    <span class="chevron"></span>
-                                </summary>
-                                <div class="details-content">
-                                    <img src="../assets/daniel_w_phillips.jpg" alt="Dr. D. W. Phillips" class="thumbnail-img-inline">
-                                    <ul class="context-list mt-0 pt-0">
-                                        <li>A Massachusetts missionary and pastor of Central Baptist Church, Phillips taught classes for Black ministers in his home and worked with educator Z.C. Rush to raise funds</li>
-                                        <li>Together, they purchased an early property near Fort Gillem for the growing school</li>
-                                    </ul>
-                                    <p class="font-italic text-secondary">Phillips helped connect northern philanthropy with local Black leadership, a partnership that defined the institution's early years.</p>
-                                </div>
-                            </details>
-
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg>
-                                </span>
-                                <h4>A Basement Classroom (1865)</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p class="font-weight-500">In 1865, Reverend Nelson Merry allowed Daniel Phillips to hold classes in the basement of the First Colored Mission. What began as informal theological instruction soon became the foundation for a permanent freedmen's school.</p>
-                                <div class="inner-card border-left-sage padding-16">
-                                    <h5>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8l6-6V4c0-1.1-.9-2-2-2zm2 14h-2v2l-4-4h4V4h2v12z"/></svg>
-                                        Bureau Act
-                                    </h5>
-                                    <img src="../assets/bureau_act.jpg" alt="Bureau Act" class="thumbnail-img-inline">
-                                    <p class="font-size-95">That same year, Congress created the <strong>Freedmen's Bureau</strong> on March 3, 1865, within the U.S. War Department. The Bureau oversaw education, labor contracts, and aid for formerly enslaved people, helping make schools like this possible.</p>
-                                    <div class="cb"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
-                    
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                                </span>
-                                <h4>A Growing Educational Network</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>Roger Williams University did not emerge alone. It was part of a rapidly expanding Black educational movement in Nashville:</p>
-                                
-                                <div class="inner-card border-left-sage mb-12 padding-16">
-                                    <h5>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
-                                        Central Tennessee College (1865)
-                                    </h5>
-                                    <img src="../assets/central_tennessee_college.jpg" alt="Central Tennessee College" class="thumbnail-img-inline">
-                                    <p class="font-size-90 mb-0 mt-0 pt-0">Founded in 1865 by the Methodist Episcopal Church and became a cornerstone of Black higher education in Nashville. Over time, it evolved into several important institutions. Its medical department developed into Meharry Medical College, which was formally chartered in 1915. After Central's law school closed in 1912, Kent College of Law continued its legacy. In 1900, Central Tennessee College became Walden University, which operated until its closure in 1925.</p>
-                                    <div class="cb"></div>
-                                </div>
-
-                                <div class="inner-card border-left-sage mb-12 padding-16">
-                                    <h5>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> 
-                                        Fisk Free Colored School (1866)
-                                    </h5>
-                                    <img src="../assets/fisk_free_colored_school.jpg" alt="Fisk Free Colored School" class="thumbnail-img-inline">
-                                    <div class="cb"></div>
-                                </div>
-                                
-                                <p class="font-italic font-size-95">Together, these institutions positioned Nashville as a center for Black higher education in the Reconstruction South.</p>
-                            </div>
-                        </div>
-                    </details>
-                </div>`, galleryText: "<p>The “African Mission” of Spring Street (Central) Baptist Church brought together free Black ministers Randal B. Vandavall and Nelson G. Merry and white missionary Reverend Daniel W. Williams. What began as classes for new and experienced ministers, \"Negro Baptist College\" became the Nashville Institute with nearly $88,000 raised by Merry, Phillips, and Vandavall from local and Northern benefactors. Later, the American Baptist Home Mission Society (ABHMS) continued to support.</p>"
+                    year: "1864", wall: "Wall 1", title: "Nashville Normal and Theological Institute", contextFile: "timeline-content/1864.html", galleryText: "<p>The “African Mission” of Spring Street (Central) Baptist Church brought together free Black ministers Randal B. Vandavall and Nelson G. Merry and white missionary Reverend Daniel W. Williams. What began as classes for new and experienced ministers, \"Negro Baptist College\" became the Nashville Institute with nearly $88,000 raised by Merry, Phillips, and Vandavall from local and Northern benefactors. Later, the American Baptist Home Mission Society (ABHMS) continued to support.</p>"
                 },
                 {
-                    year: "1867", wall: "Wall 1", title: "The Paradox of Reconstruction on Education", contextHTML: `
-                <div class="accordion-nested-container">
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
-                                </span>
-                                <h4>Institutional Organization and Leadership</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <img src="../assets/daniel_w_phillips_2.jpg" alt="Rev. Daniel W. Phillips" class="thumbnail-img-inline">
-                                <p>Classes formally began in August 1867 under the name Nashville Normal and Theological Institute. Z.C. Rush served as principal and oversaw the early development of the school's academic structure, while Rev. Daniel W. Phillips taught theology and continued his earlier work training Black ministers.</p>
-                                <p class="font-italic text-secondary">The institution operated with support from the American Baptist Home Mission Society, which sponsored several freedmen's schools across the South.</p>
-                                <div class="cb"></div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-                                </span>
-                                <h4>Early Academic Structure</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>The school offered multiple levels of education that reflected the needs of newly freed communities, including preparatory instruction, a normal school for teacher training, theological education, and early college-level coursework.</p>
-                                <p>Admission requirements were intentionally accessible &mdash; requiring students only to read, write, and complete fourth-grade mathematics to enroll. This model allowed individuals with limited previous schooling to enter higher education while continuing to build foundational skills.</p>
-
-                            </div>
-                        </div>
-                    </details>
-
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
-                                </span>
-                                <h4>Toward a College Curriculum</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>By 1871, leaders at the Nashville Normal and Theological Institute were already planning a full collegiate curriculum, reflecting the institution's rapid academic growth.</p>
-                                <p>By 1905, the school had produced nearly 500 graduates, many of whom went on to become teachers and ministers across the South.</p>
-                            </div>
-                        </div>
-                    </details>
-                </div>`, galleryText: "<p>In 1867, Tennessee passed a law to create public schools for formerly enslaved citizens. Plans were underway for the Nashville Normal and Theological Institute to begin with nearby Fisk University and Central Tennessee College. Within these institutions, the focus of education ranged from basic training to career development of ministers and teachers. By 1870, the Reconstruction efforts, including the Freedmen's Bureau, dissolved. Tennessee's 1867 law was repealed, leaving new schools vulnerable.</p>"
+                    year: "1867", wall: "Wall 1", title: "The Paradox of Reconstruction on Education", contextFile: "timeline-content/1867.html", galleryText: "<p>In 1867, Tennessee passed a law to create public schools for formerly enslaved citizens. Plans were underway for the Nashville Normal and Theological Institute to begin with nearby Fisk University and Central Tennessee College. Within these institutions, the focus of education ranged from basic training to career development of ministers and teachers. By 1870, the Reconstruction efforts, including the Freedmen's Bureau, dissolved. Tennessee's 1867 law was repealed, leaving new schools vulnerable.</p>"
                 },
-                { year: "1874", wall: "Wall 1", title: "Land & Investments", contextPlaceholder: "1874-1880", galleryText: "<p>Roger Williams University operated from two significant locations during its history: Near Fort Gillem, Reverend Daniel Phillips purchased property at the corner of Park and Polk Streets, including a two-story building that housed classrooms, a chapel and a library. Sold in 1876, the building became the Knowles Street School and later the Pearl School. Hillsboro Pike: In 1873-74, Black businessmen Henry Harding and Abram Smith helped university leaders acquire 30 acres of the W.H. Gordon plantation between Vanderbilt and Belmont mansion. The university expanded the existing Gordon Home (renamed Mansion House) and built Centennial Hall.</p>" },
-                { year: "1881", wall: "Wall 1", title: "Cultivating Professionals From Across the Country", contextPlaceholder: "1881-1884", galleryText: "<p>The diverse student body of RWU came from all across the South. Most hailed from Tennessee and neighboring states. Many traveled from as far as Chicago, New Orleans, and Indian Territory (present-day Oklahoma). RWU offered instruction for three pathways: collegiate, normal (teacher), and theological. Courses included mathematics, sciences, languages, music, and vocational training.</p>" },
-                { year: "1885", wall: "Wall 1", title: "Student Protests", contextPlaceholder: "1885-1888", galleryText: "<p>Between 1885-1888, RWU students clashed with the administration over serious grievances. Fifty-six students filed formal charges against treasurer Theodore Edwin Balch, alleging unfair treatment, financial trouble, poor food quality, sexual harassment, and other misconduct. When RWU President William Henry Stifler responded with threats of expulsion, students appealed to the American Baptist Home Mission Society (ABHMS).</p><p>Historians view this incident as emblematic of the strained relationship between Black southern Baptists and their white northern benefactors among freedmen's schools.</p>" },
+                { year: "1874", wall: "Wall 1", title: "Land & Investments", contextFile: "timeline-content/1874.html", galleryText: "<p>Roger Williams University operated from two significant locations during its history: Near Fort Gillem, Reverend Daniel Phillips purchased property at the corner of Park and Polk Streets, including a two-story building that housed classrooms, a chapel and a library. Sold in 1876, the building became the Knowles Street School and later the Pearl School. Hillsboro Pike: In 1873-74, Black businessmen Henry Harding and Abram Smith helped university leaders acquire 30 acres of the W.H. Gordon plantation between Vanderbilt and Belmont mansion. The university expanded the existing Gordon Home (renamed Mansion House) and built Centennial Hall.</p>" },
+                { year: "1881", wall: "Wall 1", title: "Cultivating Professionals From Across the Country", contextFile: "timeline-content/1881.html", galleryText: "<p>The diverse student body of RWU came from all across the South. Most hailed from Tennessee and neighboring states. Many traveled from as far as Chicago, New Orleans, and Indian Territory (present-day Oklahoma). RWU offered instruction for three pathways: collegiate, normal (teacher), and theological. Courses included mathematics, sciences, languages, music, and vocational training.</p>" },
+                { year: "1885", wall: "Wall 1", title: "Student Protests", contextFile: "timeline-content/1885.html", galleryText: "<p>Between 1885-1888, RWU students clashed with the administration over serious grievances. Fifty-six students filed formal charges against treasurer Theodore Edwin Balch, alleging unfair treatment, financial trouble, poor food quality, sexual harassment, and other misconduct. When RWU President William Henry Stifler responded with threats of expulsion, students appealed to the American Baptist Home Mission Society (ABHMS).</p><p>Historians view this incident as emblematic of the strained relationship between Black southern Baptists and their white northern benefactors among freedmen's schools.</p>" },
 
                 {
-                    year: "1888", wall: "Wall 1", title: "A Fountain of Spiritual as well as Intellectual Life", contextHTML: `
-                <div class="accordion-nested-container">
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                                </span>
-                                <h4>Annual Catalogue</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>The school's official catalogue documents the curriculum, faculty, and admission requirements of the era. Scroll through the full document below:</p>
-                                <div style="width:100%; height:460px; border-radius:6px; overflow:hidden; border: 1px solid var(--color-accent-sage); margin-top: 10px;">
-                                    <iframe src="../assets/annual_catalogue.pdf" width="100%" height="100%" style="border:none; display:block;" title="Annual Catalogue PDF"></iframe>
-                                </div>
-                                <a href="../assets/annual_catalogue.pdf" target="_blank" style="display:inline-block; margin-top:10px; font-size:0.85rem; color:var(--color-accent-sage);">&#8599; Open full PDF in new tab</a>
-                            </div>
-                        </div>
-                    </details>
-                </div>`, galleryText: "<p>RWU aimed \"to be a fountain of spiritual as well as intellectual life\" (1884-85 catalog, page 20).</p><p><strong>CATALOGS REVEAL GUIDING VALUES AND OPERATIONS</strong></p><p>University catalogs from the 1880s describe a diverse student body and a rigorous, faith-based curriculum that balanced religious training with practical education. Women held faculty positions and comprised nearly 40 percent of students in normal school classes, reflecting the institution's progressive approach to educational leadership. Work-study programs and scholarships ensured that learning remained accessible despite the financial hardships many students faced.</p>"
+                    year: "1888", wall: "Wall 1", title: "A Fountain of Spiritual as well as Intellectual Life", contextFile: "timeline-content/1888.html", galleryText: "<p>RWU aimed \"to be a fountain of spiritual as well as intellectual life\" (1884-85 catalog, page 20).</p><p><strong>CATALOGS REVEAL GUIDING VALUES AND OPERATIONS</strong></p><p>University catalogs from the 1880s describe a diverse student body and a rigorous, faith-based curriculum that balanced religious training with practical education. Women held faculty positions and comprised nearly 40 percent of students in normal school classes, reflecting the institution's progressive approach to educational leadership. Work-study programs and scholarships ensured that learning remained accessible despite the financial hardships many students faced.</p>"
                 },
 
                 {
-                    year: "1900", wall: "Wall 2", title: "W.E.B. Du Bois and the Paris Exposition of 1900", contextHTML: `
-                <div class="accordion-nested-container">
-                    <details class="accordion-custom accordion-nested">
-                        <summary>
-                            <div class="summary-inner">
-                                <span class="icon-circle-svg icon-sky">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                                </span>
-                                <h4>The 1899 Class Photos</h4>
-                            </div>
-                            <span class="chevron"></span>
-                        </summary>
-                        <div class="details-content">
-                            <div class="context-card context-card-sky">
-                                <p>These photographs from 1899 capture three distinct tracks of study at Roger Williams University, representing the graduating year before the Paris Exposition.</p>
-
-                                <div class="inner-card border-left-sage mb-12 padding-16">
-                                    <h5><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Normal Class (1899)</h5>
-                                    <img src="../assets/1899_normal_class.jpg" alt="1899 Normal Class" class="thumbnail-img-inline">
-                                    <p class="font-size-90">Students training to become teachers &mdash; the backbone of Black education across the South.</p>
-                                    <div class="cb"></div>
-                                </div>
-
-                                <div class="inner-card border-left-sage mb-12 padding-16">
-                                    <h5><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> Academic Class (1899)</h5>
-                                    <img src="../assets/1899_academic_class.jpg" alt="1899 Academic Class" class="thumbnail-img-inline">
-                                    <p class="font-size-90">The collegiate track offering rigorous academic coursework to prepare graduates for leadership roles.</p>
-                                    <div class="cb"></div>
-                                </div>
-
-                                <div class="inner-card border-left-sage padding-16">
-                                    <h5><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="var(--color-accent-sage)"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z"/></svg> Ministers Class (1899)</h5>
-                                    <img src="../assets/1899_ministers_class.jpg" alt="1899 Ministers Class" class="thumbnail-img-inline">
-                                    <p class="font-size-90">Theological training for Black ministers to serve growing communities across the South.</p>
-                                    <div class="cb"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
-                </div>`, galleryText: "<p>The 1899 class at RWU witnessed the momentous turn of the century. Their photos were part of the 1900 Paris Exposition, curated by W.E.B. Du Bois and Thomas J. Calloway. The exhibit showcased the history, conditions, education, and literature of African Americans in the United States. Data visualizations created by Du Bois and his research team were also part of the collection. The charts illustrate the growing importance of schooling and teacher training. This narrative likely resonated deeply with the RWU students and situated the university's mission within the broader education landscape in the South.</p>"
+                    year: "1900", wall: "Wall 2", title: "W.E.B. Du Bois and the Paris Exposition of 1900", contextFile: "timeline-content/1900.html", galleryText: "<p>The 1899 class at RWU witnessed the momentous turn of the century. Their photos were part of the 1900 Paris Exposition, curated by W.E.B. Du Bois and Thomas J. Calloway. The exhibit showcased the history, conditions, education, and literature of African Americans in the United States. Data visualizations created by Du Bois and his research team were also part of the collection. The charts illustrate the growing importance of schooling and teacher training. This narrative likely resonated deeply with the RWU students and situated the university's mission within the broader education landscape in the South.</p>"
                 },
-                { year: "1905", wall: "Wall 2", title: "Centennial Hall and Mansion House Fires", contextPlaceholder: "1905-1907", galleryText: "<p>On January 24, 1905, a fire started near the roof of Centennial Hall. Attributed to a defective flue, it began during an evening prayer meeting and lasted until nearly 11 p.m. Some professors and most of the 225 students were left without shelter. On May 22, 1905, a second mysterious fire consumed the Mansion House. The fire occurred approximately one week after commencement exercises, so nearly all the students had vacated. Arson was suspected because residents of the dormitories heard suspicious noises. With both main buildings lost, the school was forced to close temporarily and plan for a new campus.</p>" },
-                { year: "1908", wall: "Wall 2", title: "Rebuilding at White's Creek Pike", contextPlaceholder: "1908-??", galleryText: "<p>The move of RWU across the Cumberland River to the White's Creek Pike location represented the determination of Black Baptist leaders to take greater control of the institution. This effort was led by Rev. William Haynes, who was born into enslavement to an enslaved mother and a white plantation owner. Upon emancipation, Haynes became a prominent educator, minister, and real estate developer in Nashville. As a leader in the Tennessee Negro Baptist Association and pastor of the Sylvan Street Baptist Church, Haynes worked closely with the ABHMS to transfer the university's incorporation to a new predominantly Black Board of Trustees in 1907. That fall, new dormitory and classroom buildings were constructed. The revived Roger Williams University officially reopened at the new location on Emancipation Day, January 1, and courses resumed on September 29, 1908.</p>" },
-                { year: "", wall: "Wall 3", title: "'For them, getting an education was the same thing as becoming truly free.'", contextPlaceholder: "", galleryText: "<p><a href=\"https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/\" target=\"_blank\">Transcript: https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/</a></p>" },
-                { year: "", wall: "Wall 3", title: "Rebecca Jane Perkins Hill", contextPlaceholder: "", galleryText: "<p>Rebecca Jane Perkins Hill, a graduate of Roger Williams University (Class of 1882), stands among the institution’s most enduring legacies. Educated during the university’s most vibrant period on Hillsboro Pike, Hill carried forward its values of education, civic responsibility, and social justice far beyond Nashville. As Roger Williams faced destruction, relocation, and eventual closure in the early twentieth century, Hill transformed the mission she developed there into decades of national civil rights leadership.</p><p>After relocating to Los Angeles, Hill became a pioneering public leader and community organizer. She co-founded the Los Angeles branch of the NAACP, served for years on the city’s Human Relations Commission, and advocated for fair housing, desegregation, voting rights, and equal access to public services. At a time when Black women were rarely recognized in public leadership, Hill helped shape civil rights policy on both local and national levels—extending the influence of Roger Williams into the heart of twentieth-century activism.</p>" },
-                { year: "1929", wall: "Wall 3", title: "The Lasting Legacy of Roger Williams University", contextPlaceholder: "1929-", galleryText: "<p>In 1905, two fires destroyed Roger Williams University’s Hillsboro Pike campus. Rather than rebuilding, trustees sold the land, which was rapidly converted to residential property with racially restrictive covenants that barred Black ownership. In 1908, the university reopened on White’s Creek Pike under Black leadership, continuing to educate teachers, ministers, and professionals despite limited funds. Financial pressures ultimately forced its merger with the Howe Institute in 1929, forming today’s LeMoyne-Owen College.</p><p>Though its original campus no longer stands, the legacy of Roger Williams University lives on through alumni leaders like Rebecca Jane Perkins Hill and many others who carried its mission into communities, courtrooms, churches, and city halls across the nation.</p>" }
+                { year: "1905", wall: "Wall 2", title: "Centennial Hall and Mansion House Fires", contextFile: "timeline-content/1905.html", galleryText: "<p>On January 24, 1905, a fire started near the roof of Centennial Hall. Attributed to a defective flue, it began during an evening prayer meeting and lasted until nearly 11 p.m. Some professors and most of the 225 students were left without shelter. On May 22, 1905, a second mysterious fire consumed the Mansion House. The fire occurred approximately one week after commencement exercises, so nearly all the students had vacated. Arson was suspected because residents of the dormitories heard suspicious noises. With both main buildings lost, the school was forced to close temporarily and plan for a new campus.</p>" },
+                { year: "1908", wall: "Wall 2", title: "Rebuilding at White's Creek Pike", contextFile: "timeline-content/1908.html", galleryText: "<p>The move of RWU across the Cumberland River to the White's Creek Pike location represented the determination of Black Baptist leaders to take greater control of the institution. This effort was led by Rev. William Haynes, who was born into enslavement to an enslaved mother and a white plantation owner. Upon emancipation, Haynes became a prominent educator, minister, and real estate developer in Nashville. As a leader in the Tennessee Negro Baptist Association and pastor of the Sylvan Street Baptist Church, Haynes worked closely with the ABHMS to transfer the university's incorporation to a new predominantly Black Board of Trustees in 1907. That fall, new dormitory and classroom buildings were constructed. The revived Roger Williams University officially reopened at the new location on Emancipation Day, January 1, and courses resumed on September 29, 1908.</p>" },
+                { year: "", wall: "Wall 3", title: "'For them, getting an education was the same thing as becoming truly free.'", contextFile: "timeline-content/quote.html", galleryText: "<p><a href=\"https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/\" target=\"_blank\">Transcript: https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/</a></p>" },
+                { year: "", wall: "Wall 3", title: "Rebecca Jane Perkins Hill", contextFile: "timeline-content/rebecca.html", galleryText: "<p>Rebecca Jane Perkins Hill, a graduate of Roger Williams University (Class of 1882), stands among the institution’s most enduring legacies. Educated during the university’s most vibrant period on Hillsboro Pike, Hill carried forward its values of education, civic responsibility, and social justice far beyond Nashville. As Roger Williams faced destruction, relocation, and eventual closure in the early twentieth century, Hill transformed the mission she developed there into decades of national civil rights leadership.</p><p>After relocating to Los Angeles, Hill became a pioneering public leader and community organizer. She co-founded the Los Angeles branch of the NAACP, served for years on the city’s Human Relations Commission, and advocated for fair housing, desegregation, voting rights, and equal access to public services. At a time when Black women were rarely recognized in public leadership, Hill helped shape civil rights policy on both local and national levels—extending the influence of Roger Williams into the heart of twentieth-century activism.</p>" },
+                { year: "1929", wall: "Wall 3", title: "The Lasting Legacy of Roger Williams University", contextFile: "timeline-content/1929.html", galleryText: "<p>In 1905, two fires destroyed Roger Williams University’s Hillsboro Pike campus. Rather than rebuilding, trustees sold the land, which was rapidly converted to residential property with racially restrictive covenants that barred Black ownership. In 1908, the university reopened on White’s Creek Pike under Black leadership, continuing to educate teachers, ministers, and professionals despite limited funds. Financial pressures ultimately forced its merger with the Howe Institute in 1929, forming today’s LeMoyne-Owen College.</p><p>Though its original campus no longer stands, the legacy of Roger Williams University lives on through alumni leaders like Rebecca Jane Perkins Hill and many others who carried its mission into communities, courtrooms, churches, and city halls across the nation.</p>" }
             ];
 
             const interactiveTrack = document.getElementById('interactive-track');
@@ -657,6 +266,19 @@
                 });
             }
 
+                        function loadContextContent(item) {
+                if (item.contextFile && window.timelineContent) {
+                    const html = window.timelineContent[item.contextFile];
+                    if (html && html.trim()) {
+                        contextContent.innerHTML = html;
+                    } else {
+                        contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
+                    }
+                } else {
+                    contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
+                }
+            }
+
             function updateUI() {
                 if (nodePopover && nodePopover.style.display === 'flex') {
                     nodePopover.style.display = 'none';
@@ -693,13 +315,8 @@
                     galleryContent.innerHTML = `<p>[ENTER GALLERY TEXT HERE]</p>`;
                 }
 
-                if (item.contextHTML) {
-                    contextContent.innerHTML = item.contextHTML;
-                } else if (item.contextPlaceholder) {
-                    contextContent.innerHTML = `<p>[ENTER CONTENT HERE - ${item.contextPlaceholder}]</p>`;
-                } else {
-                    contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
-                }
+                // Load context content from file
+                loadContextContent(item);
 
                 // Update Nodes Active State
                 const nodes = interactiveTrack.querySelectorAll('.timeline-node');
