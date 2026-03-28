@@ -540,6 +540,153 @@ details>summary {
     font-weight: 500;
 }
 
+/* =========================================
+   Text Size Resizer 
+========================================= */
+.text-size-container {
+    padding: 12px 0;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+}
+
+.text-size-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
+    border-top: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-light);
+    z-index: -1;
+}
+
+.text-size-label {
+    font-family: var(--font-body);
+    color: var(--color-secondary-dark-gray);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.text-size-controls-wrapper {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.text-size-controls-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: auto;
+}
+
+.icon-text-t {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    color: var(--color-secondary-dark-gray);
+}
+
+.text-size-label-inner {
+    font-family: var(--font-body);
+    color: var(--color-primary-black);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.text-size-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-text-size {
+    background: #F4F4F4;
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary-black);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-text-size:hover {
+    background: #EBEBEB;
+}
+
+.btn-text-size svg {
+    width: 16px;
+    height: 16px;
+}
+
+.text-size-indicators {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.size-dot {
+    font-family: var(--font-body);
+    color: #BDBDBD;
+    transition: color 0.2s, font-weight 0.2s;
+}
+
+.size-dot.sm { font-size: 0.75rem; }
+.size-dot.md { font-size: 0.9rem; }
+.size-dot.lg { font-size: 1.05rem; }
+
+.size-dot.active {
+    color: var(--color-primary-black);
+    font-weight: 800;
+}
+
+/* 
+   Apply text resizing dynamically to the details content area.
+   It uses a CSS variable --text-adj set by JS 
+*/
+#gallery-content, #context-content {
+    --text-adj: 0px;
+}
+
+#gallery-content p,
+#context-content p,
+#gallery-content li,
+#context-content li,
+#gallery-content span:not(.icon-circle-svg),
+#context-content span:not(.icon-circle-svg),
+#gallery-content a,
+#context-content a,
+#gallery-content div:not(.icon-circle-svg, .details-content, .context-card, .inner-card),
+#context-content div:not(.icon-circle-svg, .details-content, .context-card, .inner-card) {
+    font-size: calc(1rem + var(--text-adj, 0px));
+}
+
+#gallery-content h4,
+#context-content h4,
+.accordion-nested .summary-inner h4,
+.accordion-sub .summary-inner h4 {
+    font-size: calc(1.1rem + var(--text-adj, 0px));
+}
+
+#gallery-content h5,
+#context-content h5 {
+    font-size: calc(1.05rem + var(--text-adj, 0px));
+}
+
+.accordion-sub .details-content p,
+.accordion-sub .details-content {
+    font-size: calc(0.95rem + var(--text-adj, 0px));
+}
+
 /* Progress Indicator */
 .progress-container {
     margin-bottom: var(--spacing-md);
@@ -659,13 +806,14 @@ details>summary {
     gap: 12px;
     z-index: 10;
     white-space: nowrap;
+    --arrow-left: 50%;
 }
 
 .node-popover::after {
     content: '';
     position: absolute;
     top: 100%;
-    left: 50%;
+    left: var(--arrow-left, 50%);
     transform: translateX(-50%);
     border-width: 6px;
     border-style: solid;
@@ -676,7 +824,7 @@ details>summary {
     content: '';
     position: absolute;
     top: 100%;
-    left: 50%;
+    left: var(--arrow-left, 50%);
     transform: translateX(-50%);
     border-width: 7px;
     border-style: solid;

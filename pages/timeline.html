@@ -50,6 +50,29 @@
             <p class="timeline-subtitle">Explore the complete chronological history</p>
         </div>
 
+        <!-- Text Size Resizer -->
+        <div class="text-size-container">
+            <div class="text-size-label">Adjust reading text size:</div>
+            <div class="text-size-controls-wrapper">
+                <div class="text-size-controls-left">
+                    <span class="icon-text-t">T</span> <span class="text-size-label-inner">Text Size</span>
+                </div>
+                <div class="text-size-controls-right">
+                    <button class="btn-text-size" id="btn-text-dec" aria-label="Decrease text size">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                    <div class="text-size-indicators">
+                        <span class="size-dot sm" id="dot-size-0">A</span>
+                        <span class="size-dot md active" id="dot-size-1">A</span>
+                        <span class="size-dot lg" id="dot-size-2">A</span>
+                    </div>
+                    <button class="btn-text-size" id="btn-text-inc" aria-label="Increase text size">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Progress Indicator -->
         <div class="progress-container">
             <div class="progress-info">
@@ -248,9 +271,39 @@
                             activePopoverIndex = -1;
                         } else {
                             activePopoverIndex = index;
-                            popoverYear.textContent = item.year;
+                            if (item.year) {
+                                popoverYear.textContent = item.year;
+                                popoverYear.style.display = '';
+                            } else {
+                                popoverYear.style.display = 'none';
+                            }
+                            // Show first to get its width
                             nodePopover.style.left = `${positionPercentage}%`;
+                            nodePopover.style.transform = 'translateX(-50%)';
                             nodePopover.style.display = 'flex';
+
+                            // Clamp so the popover never overflows the track edges
+                            const trackRect = interactiveTrack.getBoundingClientRect();
+                            const popRect = nodePopover.getBoundingClientRect();
+                            const popHalf = popRect.width / 2;
+
+                            // Dot's center in pixels relative to track left
+                            const dotCenterPx = (positionPercentage / 100) * trackRect.width;
+
+                            // Desired left edge of popover (unclamped)
+                            let clampedLeft = dotCenterPx - popHalf;
+
+                            // Clamp within track bounds (4px padding from edges)
+                            const minLeft = 4;
+                            const maxLeft = trackRect.width - popRect.width - 4;
+                            clampedLeft = Math.max(minLeft, Math.min(maxLeft, clampedLeft));
+
+                            nodePopover.style.left = `${clampedLeft}px`;
+                            nodePopover.style.transform = 'none';
+
+                            // Position arrow to point at the actual dot center
+                            const arrowLeft = dotCenterPx - clampedLeft;
+                            nodePopover.style.setProperty('--arrow-left', `${arrowLeft}px`);
                         }
                     });
                     nodesContainer.appendChild(node);
@@ -380,6 +433,52 @@
             checkURL();
             initTimelineNodes();
             updateUI();
+
+            // Text Size Resizer Logic
+            const btnTextDec = document.getElementById('btn-text-dec');
+            const btnTextInc = document.getElementById('btn-text-inc');
+            const sizeDots = [
+                document.getElementById('dot-size-0'),
+                document.getElementById('dot-size-1'),
+                document.getElementById('dot-size-2')
+            ];
+            
+            // 0 = small, 1 = default, 2 = large
+            let currentTextSize = parseInt(localStorage.getItem('rwexhibit-text-size') || '1', 10);
+            
+            function applyTextSize() {
+                sizeDots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === currentTextSize);
+                });
+                
+                let adjPx = 0;
+                if (currentTextSize === 0) adjPx = -2;
+                if (currentTextSize === 2) adjPx = 2;
+                
+                if (galleryContent) galleryContent.style.setProperty('--text-adj', `${adjPx}px`);
+                if (contextContent) contextContent.style.setProperty('--text-adj', `${adjPx}px`);
+                
+                localStorage.setItem('rwexhibit-text-size', currentTextSize.toString());
+            }
+
+            if (btnTextDec && btnTextInc) {
+                btnTextDec.addEventListener('click', () => {
+                    if (currentTextSize > 0) {
+                        currentTextSize--;
+                        applyTextSize();
+                    }
+                });
+
+                btnTextInc.addEventListener('click', () => {
+                    if (currentTextSize < 2) {
+                        currentTextSize++;
+                        applyTextSize();
+                    }
+                });
+            }
+
+            // Init text size
+            applyTextSize();
         });
     </script>
 </body>
