@@ -52,19 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeImageModal = document.getElementById('close-image-modal');
 
     if (imageModal && modalImage && closeImageModal) {
-        // Use event delegation for dynamically injected HTML (Timeline)
+        // Use capture phase so we intercept BEFORE the native <summary> toggle fires.
+        // e.preventDefault() here prevents <details> from toggling when the img is the target.
         document.body.addEventListener('click', (e) => {
-            if (e.target && e.target.classList.contains('thumbnail-img-inline')) {
-                const src = e.target.getAttribute('src');
-                const alt = e.target.getAttribute('alt');
+            const img = e.target.closest('img.thumbnail-img-inline');
+            if (img) {
+                const src = img.getAttribute('src');
+                const alt = img.getAttribute('alt');
+
+                // If image is inside a <summary>, prevent the accordion from toggling
+                if (img.closest('summary')) {
+                    e.preventDefault();
+                }
 
                 if (src) {
                     modalImage.src = src;
-                    modalImage.alt = alt || "Enlarged Image";
+                    modalImage.alt = alt || 'Enlarged Image';
                     imageModal.showModal();
                 }
             }
-        });
+        }, true); // true = capture phase
 
         closeImageModal.addEventListener('click', () => {
             imageModal.close();
