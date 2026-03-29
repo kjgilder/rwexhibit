@@ -1544,18 +1544,36 @@ details>summary {
         object-fit: contain;
         border-radius: 4px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        margin: 24px auto;
-        /* Space for sticky close button */
+        margin: 24px auto 0;
+        /* Space above for sticky close button, no bottom margin */
+    }
+
+    .modal-content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-caption {
+        color: var(--color-primary-white);
+        text-align: center;
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 12px 20px 24px;
+        width: 100%;
+        box-sizing: border-box;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     }
 
     .modal-close {
         position: sticky;
-        top: 4px;
+        top: 8px;
         /* Stay at top when scrolling */
-        float: right;
-        margin-right: 4px;
-        width: 32px;
-        height: 32px;
+        margin: 8px auto;
+        /* Center horizontally */
+        width: 36px;
+        height: 36px;
         background: var(--color-primary-white);
         color: var(--color-primary-black);
         border: 2px solid var(--color-primary-black);
