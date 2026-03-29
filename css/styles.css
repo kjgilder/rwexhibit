@@ -1523,11 +1523,12 @@ details>summary {
         border: none;
         border-radius: 8px;
         background: transparent;
-        max-width: 85vw;
-        max-height: 80vh;
+        max-width: 90vw;
+        max-height: 90vh;
         margin: auto;
-        overflow: visible;
-        /* To allow close button overlap */
+        overflow-y: auto;
+        /* Allow scrolling for tall images */
+        overflow-x: hidden;
     }
 
     .image-modal::backdrop {
@@ -1538,24 +1539,47 @@ details>summary {
     .image-modal img {
         display: block;
         max-width: 100%;
-        max-height: 80vh;
+        height: auto;
+        /* Allow full height for scrolling */
         object-fit: contain;
         border-radius: 4px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        margin: 0 auto;
+        margin: 24px auto 0;
+        /* Space above for sticky close button, no bottom margin */
+    }
+
+    .modal-content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-caption {
+        color: var(--color-primary-white);
+        text-align: center;
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 12px 20px 24px;
+        width: 100%;
+        box-sizing: border-box;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
     }
 
     .modal-close {
-        position: absolute;
-        top: -15px;
-        right: -15px;
-        width: 30px;
-        height: 30px;
+        position: sticky;
+        top: 8px;
+        /* Stay at top when scrolling */
+        margin: 8px auto;
+        /* Center horizontally */
+        width: 36px;
+        height: 36px;
         background: var(--color-primary-white);
         color: var(--color-primary-black);
         border: 2px solid var(--color-primary-black);
         border-radius: 50%;
-        font-size: 20px;
+        font-size: 24px;
+        font-weight: bold;
         line-height: 1;
         cursor: pointer;
         display: flex;
