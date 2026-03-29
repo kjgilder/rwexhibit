@@ -1641,6 +1641,121 @@ details>summary {
     }
 }
 
+/* =========================================
+   Document Carousel 
+========================================= */
+.document-carousel-container {
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-light);
+    overflow: hidden;
+}
+
+.document-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.document-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.carousel-media-wrapper {
+    width: 100%;
+    height: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-media-wrapper img,
+.carousel-media-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.carousel-media-wrapper img {
+    object-fit: contain;
+}
+
+.carousel-caption {
+    margin-top: 15px;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-primary-black);
+    font-weight: 500;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--color-border-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+    color: var(--color-primary-black);
+}
+
+.carousel-nav:hover {
+    background: var(--color-primary-black);
+    color: #fff;
+}
+
+.carousel-nav.prev { left: 10px; }
+.carousel-nav.next { right: 10px; }
+
+.carousel-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 0 20px;
+}
+
+.pagination-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pagination-dot.active {
+    background: var(--color-primary-gold);
+}
+
 /* Footer */
 .site-footer {
     background-color: var(--color-primary-black);

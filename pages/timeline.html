@@ -154,7 +154,10 @@
     <!-- Global Image Modal -->
     <dialog id="image-modal" class="image-modal">
         <button id="close-image-modal" class="modal-close" aria-label="Close image">&times;</button>
-        <img id="modal-image" src="" alt="Enlarged view">
+        <div class="modal-content-container">
+            <img id="modal-image" src="" alt="Enlarged view">
+            <div id="modal-caption" class="modal-caption"></div>
+        </div>
     </dialog>
 
     <script src="../js/main.js?v=2"></script>
@@ -329,6 +332,11 @@
                     }
                 } else {
                     contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
+                }
+                
+                // Initialize any carousels or interactive content
+                if (window.initCarousels) {
+                    setTimeout(window.initCarousels, 10);
                 }
             }
 
