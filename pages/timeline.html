@@ -397,7 +397,14 @@
 
                 // Update Navigation Buttons
                 btnPrev.disabled = currentIndex === 0;
-                btnNext.disabled = currentIndex === timelineData.length - 1;
+                
+                if (currentIndex === timelineData.length - 1) {
+                    btnNext.disabled = false;
+                    btnNext.innerHTML = 'Home <span class="arrow">›</span>';
+                } else {
+                    btnNext.disabled = false;
+                    btnNext.innerHTML = 'Next <span class="arrow">›</span>';
+                }
             }
 
             function updateURL() {
@@ -434,6 +441,9 @@
                     currentIndex++;
                     updateUI();
                     updateURL();
+                } else {
+                    // Last page: redirect to home
+                    window.location.href = '../index.html';
                 }
             });
 
