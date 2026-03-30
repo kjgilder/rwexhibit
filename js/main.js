@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalImage = document.getElementById('modal-image');
     const closeImageModal = document.getElementById('close-image-modal');
 
+    const modalCaption = document.getElementById('modal-caption');
+
     if (imageModal && modalImage && closeImageModal) {
         // Use capture phase so we intercept BEFORE the native <summary> toggle fires.
         // e.preventDefault() here prevents <details> from toggling when the img is the target.
@@ -68,25 +70,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (src) {
                     modalImage.src = src;
                     modalImage.alt = alt || 'Enlarged Image';
+                    if (modalCaption) {
+                        modalCaption.textContent = alt || '';
+                    }
                     imageModal.showModal();
                 }
             }
         }, true); // true = capture phase
 
-        closeImageModal.addEventListener('click', () => {
+        const closeModalFunc = () => {
             imageModal.close();
             // Clear src slightly after transition to avoid flicker
-            setTimeout(() => { modalImage.src = ''; }, 300);
-        });
+            setTimeout(() => { 
+                modalImage.src = ''; 
+                if (modalCaption) modalCaption.textContent = '';
+            }, 300);
+        };
+
+        closeImageModal.addEventListener('click', closeModalFunc);
 
         // Close on backdrop click
         imageModal.addEventListener('click', (e) => {
             if (e.target === imageModal) {
-                imageModal.close();
-                setTimeout(() => { modalImage.src = ''; }, 300);
+                closeModalFunc();
             }
         });
 
         // Add keyboard support (Escape key is handled natively by <dialog>, we handle enter/space on the close button natively too)
     }
+
+    // Document Carousel Logic
+    window.initCarousels = function() {
+        const containers = document.querySelectorAll('.document-carousel-container');
+        containers.forEach(container => {
+            // Prevent double initialization
+            if (container.dataset.initialized) return;
+            container.dataset.initialized = "true";
+
+            const track = container.querySelector('.document-carousel');
+            const btnPrev = container.querySelector('.carousel-nav.prev');
+            const btnNext = container.querySelector('.carousel-nav.next');
+            const dots = container.querySelectorAll('.pagination-dot');
+
+            if (!track || !btnPrev || !btnNext) return;
+
+            const updateDots = () => {
+                const index = Math.round(track.scrollLeft / track.offsetWidth);
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            };
+
+            btnPrev.addEventListener('click', () => {
+                track.scrollBy({ left: -track.offsetWidth, behavior: 'smooth' });
+            });
+
+            btnNext.addEventListener('click', () => {
+                track.scrollBy({ left: track.offsetWidth, behavior: 'smooth' });
+            });
+
+            track.addEventListener('scroll', updateDots);
+            
+            // Initial dot state
+            updateDots();
+        });
+    };
+
+    initCarousels();
 });
