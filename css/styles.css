@@ -1815,16 +1815,16 @@ details>summary {
 /* Team Grid and Cards for Credits Section */
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-md);
     margin-top: var(--spacing-lg);
 }
 
 .team-card {
     background: var(--color-surface);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -1854,19 +1854,19 @@ details>summary {
 
 .profile-placeholder {
     font-family: var(--font-heading);
-    font-size: 5rem;
+    font-size: 3.5rem;
     color: var(--color-secondary-oak);
     text-transform: uppercase;
 }
 
 .team-info {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 12px;
     background: var(--color-surface);
 }
 
 .team-name {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1rem;
     color: var(--color-primary-black);
     margin-bottom: 2px;
     line-height: 1.2;
@@ -1874,15 +1874,15 @@ details>summary {
 
 .team-dept {
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     color: var(--color-secondary-dark-gray);
     margin-bottom: 4px;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .team-year {
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: var(--color-secondary-highlight);
     font-weight: 700;
 }
