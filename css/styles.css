@@ -315,9 +315,14 @@ img {
     text-align: center;
 }
 
-.card-qr::before {
+.card-qr::before,
+.card-recently-added::before {
     background: rgba(28, 28, 28, 0.85);
     /* Darker overlay for text legibility */
+}
+
+.card-recently-added {
+    background-image: url('../assets/qr-bg.png');
 }
 
 .qr-content {
