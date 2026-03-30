@@ -310,6 +310,7 @@ img {
 /* Specific Card Backgrounds */
 .card-qr {
     background-image: url('../assets/qr-bg.png');
+    height: 100px;
     align-items: center;
     justify-content: center;
     text-align: center;
