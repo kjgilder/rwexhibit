@@ -59,7 +59,9 @@
                 </div>
                 <div class="text-size-controls-right">
                     <button class="btn-text-size" id="btn-text-dec" aria-label="Decrease text size">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
                     </button>
                     <div class="text-size-indicators">
                         <span class="size-dot sm" id="dot-size-0">A</span>
@@ -67,7 +69,9 @@
                         <span class="size-dot lg" id="dot-size-2">A</span>
                     </div>
                     <button class="btn-text-size" id="btn-text-inc" aria-label="Increase text size">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -188,8 +192,8 @@
                     year: "1900", wall: "Wall 2", title: "W.E.B. Du Bois and the Paris Exposition of 1900", contextFile: "timeline-content/1900.html", galleryText: "<p>The 1899 class at RWU witnessed the momentous turn of the century. Their photos were part of the 1900 Paris Exposition, curated by W.E.B. Du Bois and Thomas J. Calloway. The exhibit showcased the history, conditions, education, and literature of African Americans in the United States. Data visualizations created by Du Bois and his research team were also part of the collection. The charts illustrate the growing importance of schooling and teacher training. This narrative likely resonated deeply with the RWU students and situated the university's mission within the broader education landscape in the South.</p>"
                 },
                 { year: "1905", wall: "Wall 2", title: "Centennial Hall and Mansion House Fires", contextFile: "timeline-content/1905.html", galleryText: "<p>On January 24, 1905, a fire started near the roof of Centennial Hall. Attributed to a defective flue, it began during an evening prayer meeting and lasted until nearly 11 p.m. Some professors and most of the 225 students were left without shelter. On May 22, 1905, a second mysterious fire consumed the Mansion House. The fire occurred approximately one week after commencement exercises, so nearly all the students had vacated. Arson was suspected because residents of the dormitories heard suspicious noises. With both main buildings lost, the school was forced to close temporarily and plan for a new campus.</p>" },
-                { year: "1908", wall: "Wall 2", title: "Rebuilding at White's Creek Pike", contextFile: "timeline-content/1908.html", galleryText: "<p>The move of RWU across the Cumberland River to the White's Creek Pike location represented the determination of Black Baptist leaders to take greater control of the institution. This effort was led by Rev. William Haynes, who was born into enslavement to an enslaved mother and a white plantation owner. Upon emancipation, Haynes became a prominent educator, minister, and real estate developer in Nashville. As a leader in the Tennessee Negro Baptist Association and pastor of the Sylvan Street Baptist Church, Haynes worked closely with the ABHMS to transfer the university's incorporation to a new predominantly Black Board of Trustees in 1907. That fall, new dormitory and classroom buildings were constructed. The revived Roger Williams University officially reopened at the new location on Emancipation Day, January 1, and courses resumed on September 29, 1908.</p>" },
-                { year: "", wall: "Wall 3", title: "'For them, getting an education was the same thing as becoming truly free.'", contextFile: "timeline-content/quote.html", galleryText: "<p><a href=\"https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/\" target=\"_blank\">Transcript: https://www.pbs.org/video/education-the-key-to-freedom-7cb2xq/</a></p>" },
+                { year: "1908", wall: "Wall 2", title: "A New Beginning (After 1908)", contextFile: "timeline-content/1908.html", galleryText: "<p>Roger Williams University entered its final chapter, characterized by a renewed sense of Black autonomy followed by insurmountable institutional pressures. The relocation to the White’s Creek Pike campus across the Cumberland River was a symbolic and practical victory for the Tennessee Negro Baptist Association. Under the leadership of Reverend William Haynes, the university reopened on Emancipation Day, January 1, 1908, with a predominantly Black Board of Trustees, signaling a move toward self-determination and away from northern missionary oversight.</p>" },
+                { year: "", wall: "Wall 3", title: "'For them, getting an education was the same thing as becoming truly free.' -Lorem ipsum", contextFile: "timeline-content/quote.html", galleryText: "" },
                 { year: "", wall: "Wall 3", title: "Rebecca Jane Perkins Hill", contextFile: "timeline-content/rebecca.html", galleryText: "<p>Rebecca Jane Perkins Hill, a graduate of Roger Williams University (Class of 1882), stands among the institution’s most enduring legacies. Educated during the university’s most vibrant period on Hillsboro Pike, Hill carried forward its values of education, civic responsibility, and social justice far beyond Nashville. As Roger Williams faced destruction, relocation, and eventual closure in the early twentieth century, Hill transformed the mission she developed there into decades of national civil rights leadership.</p><p>After relocating to Los Angeles, Hill became a pioneering public leader and community organizer. She co-founded the Los Angeles branch of the NAACP, served for years on the city’s Human Relations Commission, and advocated for fair housing, desegregation, voting rights, and equal access to public services. At a time when Black women were rarely recognized in public leadership, Hill helped shape civil rights policy on both local and national levels—extending the influence of Roger Williams into the heart of twentieth-century activism.</p>" },
                 { year: "1929", wall: "Wall 3", title: "The Lasting Legacy of Roger Williams University", contextFile: "timeline-content/1929.html", galleryText: "<p>In 1905, two fires destroyed Roger Williams University’s Hillsboro Pike campus. Rather than rebuilding, trustees sold the land, which was rapidly converted to residential property with racially restrictive covenants that barred Black ownership. In 1908, the university reopened on White’s Creek Pike under Black leadership, continuing to educate teachers, ministers, and professionals despite limited funds. Financial pressures ultimately forced its merger with the Howe Institute in 1929, forming today’s LeMoyne-Owen College.</p><p>Though its original campus no longer stands, the legacy of Roger Williams University lives on through alumni leaders like Rebecca Jane Perkins Hill and many others who carried its mission into communities, courtrooms, churches, and city halls across the nation.</p>" }
             ];
@@ -322,7 +326,7 @@
                 });
             }
 
-                        function loadContextContent(item) {
+            function loadContextContent(item) {
                 if (item.contextFile && window.timelineContent) {
                     const html = window.timelineContent[item.contextFile];
                     if (html && html.trim()) {
@@ -333,7 +337,7 @@
                 } else {
                     contextContent.innerHTML = `<p>[ENTER CONTENT HERE]</p>`;
                 }
-                
+
                 // Initialize any carousels or interactive content
                 if (window.initCarousels) {
                     setTimeout(window.initCarousels, 10);
@@ -370,10 +374,11 @@
                 // Update Accordions
                 galleryAccordion.removeAttribute('open');
 
-                if (item.galleryText) {
+                if (item.galleryText && item.galleryText.trim() !== "") {
+                    galleryAccordion.style.display = 'block';
                     galleryContent.innerHTML = item.galleryText;
                 } else {
-                    galleryContent.innerHTML = `<p>[ENTER GALLERY TEXT HERE]</p>`;
+                    galleryAccordion.style.display = 'none';
                 }
 
                 // Load context content from file
@@ -450,22 +455,22 @@
                 document.getElementById('dot-size-1'),
                 document.getElementById('dot-size-2')
             ];
-            
+
             // 0 = small, 1 = default, 2 = large
             let currentTextSize = parseInt(localStorage.getItem('rwexhibit-text-size') || '1', 10);
-            
+
             function applyTextSize() {
                 sizeDots.forEach((dot, idx) => {
                     dot.classList.toggle('active', idx === currentTextSize);
                 });
-                
+
                 let adjPx = 0;
                 if (currentTextSize === 0) adjPx = -2;
                 if (currentTextSize === 2) adjPx = 2;
-                
+
                 if (galleryContent) galleryContent.style.setProperty('--text-adj', `${adjPx}px`);
                 if (contextContent) contextContent.style.setProperty('--text-adj', `${adjPx}px`);
-                
+
                 localStorage.setItem('rwexhibit-text-size', currentTextSize.toString());
             }
 
