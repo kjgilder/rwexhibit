@@ -48,6 +48,18 @@ a:hover {
     opacity: 0.8;
 }
 
+.text-link {
+    color: var(--color-secondary-oak) !important;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.text-link:hover {
+    color: var(--color-secondary-highlight) !important;
+    text-decoration: none;
+}
+
 img {
     max-width: 100%;
     height: auto;
@@ -1364,6 +1376,31 @@ details>summary {
     margin-top: -2px;
 }
 
+.btn-home {
+    flex: 0 0 auto;
+    width: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-primary-gold);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-home:hover {
+    background: var(--color-accent-sky-bg);
+    border-color: var(--color-primary-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.btn-home svg {
+    width: 24px;
+    height: 24px;
+}
+
 
 
 /* Base Responsive adjustments for Timeline */
@@ -1638,6 +1675,16 @@ details>summary {
     .btn-nav {
         padding: 12px;
         font-size: 1rem;
+    }
+
+    .btn-home {
+        width: 48px;
+        padding: 10px;
+    }
+
+    .btn-home svg {
+        width: 18px;
+        height: 18px;
     }
 }
 
