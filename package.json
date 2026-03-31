@@ -1,0 +1,11 @@
+{
+  "name": "rwexhibit",
+  "version": "1.0.0",
+  "description": "Roger Williams Exhibit Companion Site",
+  "scripts": {
+    "build": "python3 build.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
