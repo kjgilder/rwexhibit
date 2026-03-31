@@ -136,5 +136,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Team Profile Modal Logic
+    window.initTeamModals = function() {
+        const teamModal = document.getElementById('team-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalName = document.getElementById('modal-name');
+        const modalMajor = document.getElementById('modal-major');
+        const modalMinor = document.getElementById('modal-minor');
+        const modalYear = document.getElementById('modal-year');
+        const closeBtn = document.querySelector('.modal-close-btn');
+
+        if (!teamModal) return;
+
+        const teamCards = document.querySelectorAll('.team-card');
+        teamCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const { name, major, minor, year, img } = card.dataset;
+                
+                if (modalImg) {
+                    modalImg.src = img;
+                    modalImg.alt = name;
+                }
+                if (modalName) modalName.textContent = name;
+                if (modalMajor) modalMajor.textContent = major;
+                if (modalMinor) {
+                    modalMinor.textContent = minor;
+                    modalMinor.style.display = minor ? 'block' : 'none';
+                }
+                if (modalYear) modalYear.textContent = year;
+
+                teamModal.showModal();
+            });
+
+            // Keyboard support
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `View profile of ${card.dataset.name}`);
+        });
+
+        const closeModal = () => {
+            teamModal.classList.add('closing');
+            teamModal.close();
+            teamModal.classList.remove('closing');
+        };
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeModal);
+        }
+
+        // Close on backdrop click
+        teamModal.addEventListener('click', (e) => {
+            if (e.target === teamModal) {
+                closeModal();
+            }
+        });
+    };
+
     initCarousels();
+    initTeamModals();
 });

@@ -66,7 +66,7 @@
                     <h3 style="margin-top: var(--spacing-lg); margin-bottom: var(--spacing-sm);">Development Team</h3>
                     <div class="team-grid">
                         <!-- Card 1: Katie Gildersleeve -->
-                        <div class="team-card">
+                        <div class="team-card" data-member="katie" data-name="Katie Gildersleeve" data-major="Major: Computer Science" data-minor="" data-year="Class of 2026" data-img="../assets/katie_profile.jpg">
                             <div class="profile-media">
                                 <img src="../assets/katie_profile.jpg" alt="Katie Gildersleeve">
                             </div>
@@ -78,7 +78,7 @@
                         </div>
 
                         <!-- Card 2: Katherine Ernst -->
-                        <div class="team-card">
+                        <div class="team-card" data-member="katherine" data-name="Katherine Ernst" data-major="Majors: HOD and CS" data-minor="Minor: Business" data-year="Class of 2026" data-img="../assets/katherine_profile.jpg">
                             <div class="profile-media">
                                 <img src="../assets/katherine_profile.jpg" alt="Katherine Ernst">
                             </div>
@@ -91,7 +91,7 @@
                         </div>
 
                         <!-- Card 3: Liz Yeh -->
-                        <div class="team-card">
+                        <div class="team-card" data-member="liz" data-name="Liz Yeh" data-major="Major: Computer Science" data-minor="Minor: Data Science and Violin Performance" data-year="Class of 2028" data-img="../assets/liz_profile.jpg">
                             <div class="profile-media">
                                 <img src="../assets/liz_profile.jpg" alt="Liz Yeh">
                             </div>
@@ -104,7 +104,7 @@
                         </div>
 
                         <!-- Card 4: Oseremhen Ewaleifoh -->
-                        <div class="team-card">
+                        <div class="team-card" data-member="oseremhen" data-name="Oseremhen Ewaleifoh" data-major="Major: Computer Science" data-minor="Minor: Engineering Mgmt" data-year="Class of 2026" data-img="../assets/oseremhen_profile.jpg">
                             <div class="profile-media">
                                 <img src="../assets/oseremhen_profile.jpg" alt="Oseremhen Ewaleifoh">
                             </div>
@@ -117,7 +117,7 @@
                         </div>
 
                         <!-- Card 5: Peter Du -->
-                        <div class="team-card">
+                        <div class="team-card" data-member="peter" data-name="Yile (Peter) Du" data-major="Majors: HOD and Psychology" data-minor="Minor: Computer Science" data-year="Class of 2026" data-img="../assets/peter_profile.jpeg">
                             <div class="profile-media">
                                 <img src="../assets/peter_profile.jpeg" alt="Yile (Peter) Du">
                             </div>
@@ -134,6 +134,24 @@
         </section>
     </main>
 
+    <!-- Team Profile Modal -->
+    <dialog id="team-modal" class="team-profile-modal">
+        <div class="modal-card">
+            <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modal-img" src="" alt="">
+                </div>
+                <div class="modal-info-content">
+                    <h2 id="modal-name"></h2>
+                    <p id="modal-major" class="modal-major-text"></p>
+                    <p id="modal-minor" class="modal-minor-text"></p>
+                    <span id="modal-year" class="modal-year-badge"></span>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
     <footer class="site-footer">
         <div class="container">
             <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
@@ -141,6 +159,14 @@
     </footer>
 
     <script src="../js/main.js"></script>
+    <script>
+        // Inline init specifically for these modals if main.js isn't ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initTeamModals === 'function') {
+                initTeamModals();
+            }
+        });
+    </script>
 </body>
 
 </html>
