@@ -1,4 +1,3 @@
 vercel-blob
-upstash-redis
+redis
 python-multipart
-# Other standard libraries like uuid, json, and time are built-in.

@@ -16,18 +16,17 @@ import os
 import json
 import uuid
 from vercel_blob import put
-from upstash_redis import Redis
+import redis
 
 DATA_FILE = "data/materials.json"
 
 def migrate():
     # 1. Validate Environment
     blob_token = os.environ.get("BLOB_READ_WRITE_TOKEN")
-    kv_url = os.environ.get("KV_REST_API_URL")
-    kv_token = os.environ.get("KV_REST_API_TOKEN")
+    redis_url = os.environ.get("REDIS_URL")
 
-    if not all([blob_token, kv_url, kv_token]):
-        print("ERROR: Missing environment variables. Please set BLOB_READ_WRITE_TOKEN, KV_REST_API_URL, and KV_REST_API_TOKEN.")
+    if not all([blob_token, redis_url]):
+        print("ERROR: Missing environment variables. Please set BLOB_READ_WRITE_TOKEN and REDIS_URL.")
         return
 
     if not os.path.exists(DATA_FILE):
@@ -40,7 +39,7 @@ def migrate():
 
     print(f"Found {len(materials)} materials to migrate...")
 
-    kv = Redis(url=kv_url, token=kv_token)
+    kv = redis.from_url(redis_url, decode_responses=True)
     new_materials = []
 
     # 3. Process and Upload

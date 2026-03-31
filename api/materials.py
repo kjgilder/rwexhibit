@@ -4,15 +4,15 @@ import uuid
 import time
 from http.server import BaseHTTPRequestHandler
 from vercel_blob import put, delete as blob_delete
-from upstash_redis import Redis
+import redis
 
-# Helper to get the Redis client
+# Helper to get the Redis client using the standard REDIS_URL
 def get_kv():
-    url = os.environ.get("KV_REST_API_URL")
-    token = os.environ.get("KV_REST_API_TOKEN")
-    if not url or not token:
-        raise ValueError("KV environment variables not set")
-    return Redis(url=url, token=token)
+    url = os.environ.get("REDIS_URL")
+    if not url:
+        raise ValueError("REDIS_URL environment variable not set")
+    # Decode_responses=True makes it return strings instead of bytes
+    return redis.from_url(url, decode_responses=True)
 
 class handler(BaseHTTPRequestHandler):
     def _set_headers(self, status=200, content_type="application/json"):
