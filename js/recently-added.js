@@ -66,7 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- State & Constants ---
-    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:8000' : '';
+    // In production (Vercel), we use relative paths. Locally, we use the server port.
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:8000' 
+        : '';
+    
+    // Helper to format media path (handles both local relative paths and remote Vercel Blob URLs)
+    function formatPath(path) {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        // Ensure no double slashes when prepending API_BASE
+        const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        return API_BASE ? `${API_BASE}/${cleanPath}` : `/${cleanPath}`;
+    }
+
     const materialsContainer = document.getElementById('materials-container');
     const uploadForm = document.getElementById('upload-form');
     const uploadBtn = document.getElementById('upload-btn');
@@ -93,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => {
                 console.error('Error loading materials:', err);
-                materialsContainer.innerHTML = '<p class="status-error">Could not load materials. Ensure server is running.</p>';
+                materialsContainer.innerHTML = '<p class="status-error">Could not load materials. Ensure server is running or cloud storage is configured.</p>';
             });
     }
 
@@ -118,11 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const doc = items[0];
                 const isPdf = doc.path.toLowerCase().endsWith('.pdf');
                 mediaHTML = isPdf 
-                    ? `<a href="${API_BASE}/${doc.path}" target="_blank" class="pdf-link-placeholder">
+                    ? `<a href="${formatPath(doc.path)}" target="_blank" class="pdf-link-placeholder">
                         <svg viewBox="0 0 24 24" width="64" height="64" style="fill:none; stroke:currentColor; stroke-width:2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         <span>View PDF</span>
                       </a>`
-                    : `<img src="${API_BASE}/${doc.path}" class="material-image thumbnail-img-inline">`;
+                    : `<img src="${formatPath(doc.path)}" class="material-image thumbnail-img-inline">`;
             } else if (items.length > 1) {
                 mediaHTML = `
                     <div class="document-carousel-container" style="height:100%">
@@ -130,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${items.map(it => `
                                 <div class="carousel-slide">
                                     ${it.path.toLowerCase().endsWith('.pdf') 
-                                        ? `<iframe src="${API_BASE}/${it.path}#view=FitW"></iframe>` 
-                                        : `<img src="${API_BASE}/${it.path}" class="thumbnail-img-inline">`}
+                                        ? `<iframe src="${formatPath(it.path)}#view=FitW"></iframe>` 
+                                        : `<img src="${formatPath(it.path)}" class="thumbnail-img-inline">`}
                                 </div>
                             `).join('')}
                         </div>
