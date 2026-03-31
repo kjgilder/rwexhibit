@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             stagedFiles.forEach((sf, i) => {
                 formData.append('image', sf.file);
-                formData.append(`desc_${sf.file.name}`, sf.description);
+                formData.append(`desc_${i}`, sf.description);
             });
 
             try {
