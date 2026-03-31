@@ -4,7 +4,7 @@ This repository contains the source code for the Roger Williams digital exhibit.
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## Quick Start (Local Development)
 
 To run the project locally with full admin functionality:
 1.  Open your terminal in the project root.
@@ -16,7 +16,7 @@ To run the project locally with full admin functionality:
 
 ---
 
-## 🛠️ Architecture & Build System
+## Architecture & Build System
 
 The project uses a "Build-Once, Run-Anywhere" approach to handle dynamic content without requiring a database for the main timeline.
 
@@ -37,7 +37,7 @@ A lightweight Python server handles the "Recently Added Material" section.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 - `/pages`: Contains the main HTML pages (Timeline, About, Recently Added).
   - `/timeline-content`: Source HTML partials for each timeline node.
@@ -52,7 +52,7 @@ A lightweight Python server handles the "Recently Added Material" section.
 
 ---
 
-## 📝 Tips for Contributors
+## Tips for Contributors
 
 - **Mobile First:** The design uses CSS variables and a responsive grid. Always test changes in the mobile view.
 - **No Heavy Frameworks:** The site uses Vanilla JS and CSS for performance and longevity. Avoid adding heavy dependencies like React or Tailwind unless strictly necessary.
