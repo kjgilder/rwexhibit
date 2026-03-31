@@ -47,8 +47,8 @@ class handler(BaseHTTPRequestHandler):
         content_length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(content_length)
 
-        # 1. Handle Reorder (JSON)
-        if self.path == '/api/materials/reorder':
+        # 1. Handle Reorder (JSON /api/materials/reorder)
+        if "/api/materials/reorder" in self.path:
             try:
                 new_order_ids = json.loads(body)
                 data = kv.get("materials")
@@ -67,41 +67,50 @@ class handler(BaseHTTPRequestHandler):
                 self._set_headers(200)
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
             except Exception as e:
+                print(f"Reorder Error: {e}")
                 self._set_headers(500)
                 self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
             return
 
         # 2. Handle Update (JSON - e.g. /api/materials/UUID)
-        path_parts = self.path.split('/')
-        if len(path_parts) == 4 and path_parts[2] == 'materials':
-            material_id = path_parts[3]
-            try:
-                update_data = json.loads(body)
-                data = kv.get("materials")
-                materials = json.loads(data) if data else []
-                
-                updated = False
-                for m in materials:
-                    if m["id"] == material_id:
-                        if "title" in update_data: m["title"] = update_data["title"]
-                        if "items" in update_data:
-                            for u_item in update_data["items"]:
-                                idx = u_item.get("index")
-                                if idx is not None and idx < len(m.get("items", [])):
-                                    m["items"][idx]["description"] = u_item["description"]
-                        updated = True
-                        break
-                
-                if updated:
-                    kv.set("materials", json.dumps(materials))
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-                else:
-                    self._set_headers(404)
-            except Exception as e:
-                self._set_headers(500)
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
+        parts = self.path.rstrip('/').split('/')
+        # Look for the segment after 'materials' if 'api' and 'materials' are present
+        if 'api' in parts and 'materials' in parts:
+            m_idx = parts.index('materials')
+            if len(parts) > m_idx + 1:
+                material_id = parts[m_idx + 1]
+                # Skip if the last part is 'reorder' (handled above)
+                if material_id != 'reorder':
+                    try:
+                        update_data = json.loads(body)
+                        data = kv.get("materials")
+                        materials = json.loads(data) if data else []
+                        
+                        updated = False
+                        for m in materials:
+                            if m["id"] == material_id:
+                                if "title" in update_data: m["title"] = update_data["title"]
+                                if "items" in update_data:
+                                    for u_item in update_data["items"]:
+                                        idx = u_item.get("index")
+                                        if idx is not None and idx < len(m.get("items", [])):
+                                            m["items"][idx]["description"] = u_item["description"]
+                                updated = True
+                                break
+                        
+                        if updated:
+                            kv.set("materials", json.dumps(materials))
+                            self._set_headers(200)
+                            self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                        else:
+                            print(f"Update Error: Material ID {material_id} not found in database.")
+                            self._set_headers(404)
+                            self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
+                    except Exception as e:
+                        print(f"Update Exception: {e}")
+                        self._set_headers(500)
+                        self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                    return
 
         # 3. Handle Multipart Upload (New Material)
         if self.path == '/api/materials':
@@ -177,35 +186,42 @@ class handler(BaseHTTPRequestHandler):
         self._set_headers(404)
 
     def do_DELETE(self):
-        path_parts = self.path.split('/')
-        if len(path_parts) == 4 and path_parts[2] == 'materials':
-            material_id = path_parts[3]
-            try:
-                kv = get_kv()
-                data = kv.get("materials")
-                materials = json.loads(data) if data else []
-                
-                item_to_delete = next((m for m in materials if m["id"] == material_id), None)
-                if not item_to_delete:
-                    self._set_headers(404)
+        parts = self.path.rstrip('/').split('/')
+        if 'api' in parts and 'materials' in parts:
+            m_idx = parts.index('materials')
+            if len(parts) > m_idx + 1:
+                material_id = parts[m_idx + 1]
+                try:
+                    kv = get_kv()
+                    data = kv.get("materials")
+                    materials = json.loads(data) if data else []
+                    
+                    item_to_delete = next((m for m in materials if m["id"] == material_id), None)
+                    if not item_to_delete:
+                        print(f"Delete Error: Material ID {material_id} not found.")
+                        self._set_headers(404)
+                        self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
+                        return
+                    
+                    # Delete from Blob
+                    for item in item_to_delete.get("items", []):
+                        try:
+                            blob_delete(item["path"])
+                        except Exception as be: 
+                            print(f"Blob Delete warning: {be}")
+                    
+                    # Update KV
+                    materials = [m for m in materials if m["id"] != material_id]
+                    kv.set("materials", json.dumps(materials))
+                    
+                    self._set_headers(200)
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                     return
-                
-                # Delete from Blob
-                for item in item_to_delete.get("items", []):
-                    try:
-                        blob_delete(item["path"])
-                    except: pass # Ignore if file was already gone
-                
-                # Update KV
-                materials = [m for m in materials if m["id"] != material_id]
-                kv.set("materials", json.dumps(materials))
-                
-                self._set_headers(200)
-                self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-            except Exception as e:
-                self._set_headers(500)
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
+                except Exception as e:
+                    print(f"Delete Exception: {e}")
+                    self._set_headers(500)
+                    self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                    return
         
         self._set_headers(404)
 
