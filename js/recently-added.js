@@ -386,11 +386,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         loadMaterials();
                     }, 1000);
                 } else {
-                    alert("Failed to save changes.");
+                    const errorData = await res.json().catch(() => ({}));
+                    const msg = errorData.error || "Unknown server error";
+                    alert(`Failed to save changes: ${msg}`);
                 }
             } catch (err) { 
                 console.error(err); 
-                alert("Error saving shifts. Check server log.");
+                alert(`Error saving changes: ${err.message}`);
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Changes';
