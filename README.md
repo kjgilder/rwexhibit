@@ -58,6 +58,4 @@ A lightweight Python server handles the "Recently Added Material" section.
 - **No Heavy Frameworks:** The site uses Vanilla JS and CSS for performance and longevity. Avoid adding heavy dependencies like React or Tailwind unless strictly necessary.
 - **Icons:** Most icons are inline SVGs or from a simple CDN link in the header.
 
----
 
-**Happy Coding!**
