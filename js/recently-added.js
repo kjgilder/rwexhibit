@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const loginError = document.getElementById('login-error');
     const adminSection = document.getElementById('admin-section');
+    const reorderHint = document.getElementById('reorder-hint');
     
     // Check if already logged in via Session Storage
     const isLoggedIn = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
@@ -25,12 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
-            // Hardcoded Credentials requested by client
             if (email === 'ally.jacobs@vanderbilt.edu' && password === 'allyjacobs') {
                 sessionStorage.setItem('rwexhibit_admin_logged_in', 'true');
                 loginModal.close();
                 enableAdminMode();
-                loadMaterials(); // Re-render to show delete buttons
+                loadMaterials();
             } else {
                 loginError.style.display = 'block';
             }
@@ -38,21 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function enableAdminMode() {
-        if(adminSection) {
-            adminSection.classList.remove('hidden');
-        }
-        if (adminTrigger) {
-            adminTrigger.textContent = 'Logout';
-        }
+        if(adminSection) adminSection.classList.remove('hidden');
+        if(reorderHint) reorderHint.classList.remove('hidden');
+        if (adminTrigger) adminTrigger.textContent = 'Logout';
     }
 
     function disableAdminMode() {
-        if(adminSection) {
-            adminSection.classList.add('hidden');
-        }
-        if (adminTrigger) {
-            adminTrigger.textContent = 'Admin';
-        }
+        if(adminSection) adminSection.classList.add('hidden');
+        if(reorderHint) reorderHint.classList.add('hidden');
+        if (adminTrigger) adminTrigger.textContent = 'Admin';
         sessionStorage.removeItem('rwexhibit_admin_logged_in');
         loadMaterials();
     }
@@ -61,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         adminTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             const isLoggedInNow = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
-            
             if (isLoggedInNow) {
                 disableAdminMode();
             } else {
@@ -72,34 +65,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Data Fetching and Rendering ---
+    // --- State & Constants ---
+    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:8000' : '';
     const materialsContainer = document.getElementById('materials-container');
     const uploadForm = document.getElementById('upload-form');
     const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('material-image');
+    const stagingArea = document.getElementById('file-staging-area');
     const uploadStatus = document.getElementById('upload-status');
+    
+    let stagedFiles = [];
+    let materialsList = []; // Kept in memory for editing
+    let sortableInstance = null;
 
+    // --- Loading & Rendering ---
     function loadMaterials() {
         if (!materialsContainer) return;
         
-        fetch('/api/materials')
-            .then(response => {
-                if(!response.ok) throw new Error('Not found or server error');
-                return response.json();
-            })
+        fetch(`${API_BASE}/api/materials`)
+            .then(res => res.json())
             .then(data => {
+                materialsList = data; // Save to global state
                 renderMaterials(data);
+                if (sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true') {
+                    initSortable();
+                }
             })
-            .catch(error => {
-                console.error('Error fetching materials:', error);
-                materialsContainer.innerHTML = '<p class="status-error" style="grid-column: 1/-1;">Could not load materials. Ensure the python server is running.</p>';
+            .catch(err => {
+                console.error('Error loading materials:', err);
+                materialsContainer.innerHTML = '<p class="status-error">Could not load materials. Ensure server is running.</p>';
             });
     }
 
     function renderMaterials(materials) {
-        materialsContainer.innerHTML = ''; // Clear loading text
-
+        materialsContainer.innerHTML = ''; 
         if (materials.length === 0) {
-            materialsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--color-secondary-dark-gray);">No materials have been added recently.</p>';
+            materialsContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center;">No materials found.</p>';
             return;
         }
 
@@ -108,165 +109,329 @@ document.addEventListener('DOMContentLoaded', () => {
         materials.forEach(item => {
             const card = document.createElement('article');
             card.className = 'material-card';
+            card.dataset.id = item.id;
 
-            const dateStr = new Date(item.timestamp * 1000).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-
-            // Delete button mapping
-            let deleteBtnHTML = '';
-            if (isAdmin) {
-                deleteBtnHTML = `<button class="btn-delete" data-id="${item.id}" aria-label="Delete ${item.title}">&times;</button>`;
-            }
-
-            const isPdf = item.imagePath.toLowerCase().endsWith('.pdf');
-            
+            const items = item.items || [];
             let mediaHTML = '';
-            if (isPdf) {
+
+            if (items.length === 1) {
+                const doc = items[0];
+                const isPdf = doc.path.toLowerCase().endsWith('.pdf');
+                mediaHTML = isPdf 
+                    ? `<a href="${API_BASE}/${doc.path}" target="_blank" class="pdf-link-placeholder">
+                        <svg viewBox="0 0 24 24" width="64" height="64" style="fill:none; stroke:currentColor; stroke-width:2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>View PDF</span>
+                      </a>`
+                    : `<img src="${API_BASE}/${doc.path}" class="material-image thumbnail-img-inline">`;
+            } else if (items.length > 1) {
                 mediaHTML = `
-                    <a href="../${item.imagePath}" target="_blank" style="text-decoration: none; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--color-primary-black);">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        <span style="font-family: var(--font-body); font-weight: bold;">View PDF</span>
-                    </a>
+                    <div class="document-carousel-container" style="height:100%">
+                        <div class="carousel-track">
+                            ${items.map(it => `
+                                <div class="carousel-slide">
+                                    ${it.path.toLowerCase().endsWith('.pdf') 
+                                        ? `<iframe src="${API_BASE}/${it.path}#view=FitW"></iframe>` 
+                                        : `<img src="${API_BASE}/${it.path}" class="thumbnail-img-inline">`}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="carousel-btn prev" aria-label="Previous" type="button">&#10094;</button>
+                        <button class="carousel-btn next" aria-label="Next" type="button">&#10095;</button>
+                        <div class="carousel-dots">
+                            ${items.map((_, i) => `<span class="dot ${i===0?'active':''}" data-index="${i}"></span>`).join('')}
+                        </div>
+                    </div>
                 `;
-            } else {
-                mediaHTML = `<img src="../${item.imagePath}" alt="${item.title}" class="material-image thumbnail-img-inline">`;
             }
+
+            const currentDesc = items[0]?.description || "";
 
             card.innerHTML = `
-                ${deleteBtnHTML}
-                <div class="material-image-container">
-                    ${mediaHTML}
-                </div>
+                ${isAdmin ? `
+                    <div class="admin-card-actions">
+                        <div class="drag-handle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
+                        <button class="btn-edit" data-id="${item.id}" title="Edit metadata">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="btn-delete" data-id="${item.id}" title="Delete">&times;</button>
+                    </div>
+                ` : ''}
+                <div class="material-image-container">${mediaHTML}</div>
                 <div class="material-content">
                     <h3 class="material-title">${item.title}</h3>
-                    <div class="material-date">Added on ${dateStr}</div>
+                    <div class="material-date">Added on ${new Date(item.timestamp*1000).toLocaleDateString()}</div>
+                    <p class="material-description" id="desc-${item.id}">${currentDesc}</p>
                 </div>
             `;
             materialsContainer.appendChild(card);
+
+            if (items.length > 1) {
+                initCarousel(card.querySelector('.document-carousel-container'), items, card.querySelector(`#desc-${item.id}`));
+            }
         });
 
-        // Attach delete event listeners
-        if (sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true') {
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', handleDelete);
-            });
+        if (isAdmin) {
+            document.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', handleDelete));
+            document.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', handleEdit));
         }
     }
 
-    // --- Upload Logic ---
-    if (uploadForm) {
-        uploadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+    // --- Carousel Logic ---
+    function initCarousel(container, items, descElement) {
+        if (!container || !items || items.length === 0) return;
+        const track = container.querySelector('.carousel-track');
+        const dots = container.querySelectorAll('.dot');
+        let index = 0;
+
+        const update = () => {
+            track.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            if (descElement) {
+                descElement.textContent = items[index].description || ""; 
+            }
+        };
+
+        container.querySelector('.next').addEventListener('click', e => {
+            e.stopPropagation(); e.preventDefault(); index = (index+1) % items.length; update();
+        });
+        container.querySelector('.prev').addEventListener('click', e => {
+            e.stopPropagation(); e.preventDefault(); index = (index-1+items.length) % items.length; update();
+        });
+        dots.forEach(d => d.addEventListener('click', e => {
+            e.stopPropagation(); e.preventDefault(); index = parseInt(d.dataset.index); update();
+        }));
+    }
+
+    // --- Staging Area Management ---
+    if (fileInput) {
+        fileInput.addEventListener('change', () => {
+            const files = Array.from(fileInput.files);
+            files.forEach(f => {
+                stagedFiles.push({
+                    file: f,
+                    id: Math.random().toString(36).substr(2, 9),
+                    description: ""
+                });
+            });
+            fileInput.value = ""; 
+            renderStaging();
+        });
+    }
+
+    function renderStaging() {
+        if (!stagingArea) return;
+        stagingArea.innerHTML = '';
+        
+        stagedFiles.forEach(sf => {
+            const row = document.createElement('div');
+            row.className = 'staged-file-card';
             
-            const titleInput = document.getElementById('material-title').value;
-            const fileInput = document.getElementById('material-image').files[0];
+            const isImage = sf.file.type.startsWith('image/');
+            const thumbHTML = isImage 
+                ? `<img src="${URL.createObjectURL(sf.file)}">`
+                : `<svg viewBox="0 0 24 24" style="fill:none; stroke:currentColor; stroke-width:2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
 
-            if (!titleInput || !fileInput) return;
+            row.innerHTML = `
+                <div class="staged-thumb">${thumbHTML}</div>
+                <div class="staged-info">
+                    <div class="staged-filename">${sf.file.name}</div>
+                    <input type="text" class="staged-desc-input" placeholder="Item description" value="${sf.description}" data-id="${sf.id}">
+                </div>
+                <button type="button" class="btn-remove-staged" data-id="${sf.id}">&times;</button>
+            `;
+            stagingArea.appendChild(row);
+        });
 
-            const formData = new FormData();
-            formData.append('title', titleInput);
-            formData.append('image', fileInput);
+        const btnCount = uploadBtn.querySelector('span');
+        if (btnCount) btnCount.textContent = `(${stagedFiles.length} files)`;
+
+        stagingArea.querySelectorAll('.staged-desc-input').forEach(inp => {
+            inp.addEventListener('input', e => {
+                const sf = stagedFiles.find(s => s.id === e.target.dataset.id);
+                if (sf) sf.description = e.target.value;
+            });
+        });
+        stagingArea.querySelectorAll('.btn-remove-staged').forEach(btn => {
+            btn.addEventListener('click', () => {
+                stagedFiles = stagedFiles.filter(s => s.id !== btn.dataset.id);
+                renderStaging();
+            });
+        });
+    }
+
+    // --- Upload ---
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const title = document.getElementById('material-title').value;
+            if (!title || stagedFiles.length === 0) return;
 
             uploadBtn.disabled = true;
             uploadBtn.textContent = 'Uploading...';
-            uploadStatus.textContent = '';
-            uploadStatus.className = 'status-message';
-
-            fetch('/api/materials', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Upload failed');
-                }
-                return response.json();
-            })
-            .then(data => {
-                uploadForm.reset();
-                uploadStatus.textContent = 'Material uploaded successfully!';
-                uploadStatus.classList.add('status-success');
-                loadMaterials(); // Refresh list
-                
-                setTimeout(() => {
-                    uploadStatus.textContent = '';
-                    uploadStatus.classList.remove('status-success');
-                }, 4000);
-            })
-            .catch(error => {
-                console.error('Upload Error:', error);
-                uploadStatus.textContent = 'Error uploading material. Please try again.';
-                uploadStatus.classList.add('status-error');
-            })
-            .finally(() => {
-                uploadBtn.disabled = false;
-                uploadBtn.textContent = 'Upload Material';
+            
+            const formData = new FormData();
+            formData.append('title', title);
+            
+            stagedFiles.forEach((sf, i) => {
+                formData.append('image', sf.file);
+                formData.append(`desc_${sf.file.name}`, sf.description);
             });
+
+            try {
+                const res = await fetch(`${API_BASE}/api/materials`, { method: 'POST', body: formData });
+                if (!res.ok) throw new Error('Upload failed');
+                uploadForm.reset();
+                stagedFiles = [];
+                renderStaging();
+                uploadStatus.textContent = 'Uploaded Successfully!';
+                loadMaterials();
+                setTimeout(() => uploadStatus.textContent = '', 3000);
+            } catch (err) {
+                console.error(err);
+                uploadStatus.textContent = 'Upload failed.';
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = 'Upload Material <span>(0 files)</span>';
+            }
         });
     }
 
-    // --- Delete Logic ---
+    // --- Edit Mode ---
+    const editModal = document.getElementById('edit-modal');
+    const editForm = document.getElementById('edit-form');
+    const editItemsContainer = document.getElementById('edit-items-container');
+    const closeEditModalBtn = document.getElementById('close-edit-modal');
+    let currentEditId = null;
+
+    function handleEdit(e) {
+        const id = e.currentTarget.dataset.id;
+        const item = materialsList.find(m => m.id === id);
+        if (!item) return;
+
+        currentEditId = id;
+        document.getElementById('edit-title').value = item.title;
+        
+        editItemsContainer.innerHTML = '';
+        item.items.forEach((it, idx) => {
+            const row = document.createElement('div');
+            row.className = 'staged-file-card';
+            row.style.gridTemplateColumns = '60px 1fr';
+            row.style.marginBottom = '10px';
+
+            const isPdf = it.path.toLowerCase().endsWith('.pdf');
+            const thumbHTML = isPdf 
+                ? `<svg viewBox="0 0 24 24" width="24" height="24" style="fill:none; stroke:currentColor; stroke-width:1;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+                : `<img src="${API_BASE}/${it.path}" style="width:100%; height:100%; object-fit:cover;">`;
+
+            row.innerHTML = `
+                <div class="staged-thumb" style="width:60px; height:45px;">${thumbHTML}</div>
+                <div class="staged-info">
+                    <textarea class="edit-item-desc" data-index="${idx}" style="width:100%; min-height:60px; padding:8px; border-radius:4px; border:1px solid #ddd; font-family:var(--font-body); font-size:0.85rem;">${it.description || ""}</textarea>
+                </div>
+            `;
+            editItemsContainer.appendChild(row);
+        });
+
+        editModal.showModal();
+    }
+
+    if (closeEditModalBtn) closeEditModalBtn.addEventListener('click', () => editModal.close());
+
+    if (editForm) {
+        editForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!currentEditId) return;
+
+            const saveBtn = document.getElementById('save-edit-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            const updatedItems = Array.from(editItemsContainer.querySelectorAll('.edit-item-desc')).map(ta => ({
+                index: parseInt(ta.dataset.index),
+                description: ta.value
+            }));
+
+            const payload = {
+                title: document.getElementById('edit-title').value,
+                items: updatedItems
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/materials/${currentEditId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    const statusMsg = document.createElement('div');
+                    statusMsg.textContent = 'Changes saved successfully!';
+                    statusMsg.style.cssText = 'color:green; text-align:center; margin-bottom:10px; font-weight:bold;';
+                    editForm.prepend(statusMsg);
+                    
+                    setTimeout(() => {
+                        editModal.close();
+                        loadMaterials();
+                    }, 1000);
+                } else {
+                    alert("Failed to save changes.");
+                }
+            } catch (err) { 
+                console.error(err); 
+                alert("Error saving shifts. Check server log.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        });
+    }
+
+    // --- SortableJS ---
+    function initSortable() {
+        if (typeof Sortable === 'undefined') {
+            console.warn('SortableJS library not loaded');
+            return;
+        }
+        if (sortableInstance) sortableInstance.destroy();
+        
+        sortableInstance = Sortable.create(materialsContainer, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: () => {
+                const ids = Array.from(materialsContainer.querySelectorAll('.material-card')).map(c => c.dataset.id);
+                fetch(`${API_BASE}/api/materials/reorder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ids)
+                }).catch(err => console.error(err));
+            }
+        });
+    }
+
+    // --- Delete ---
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
-    console.log("Delete modal found:", deleteConfirmModal);
     const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
     const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
-    let materialIdToDelete = null;
-
-    if (cancelDeleteBtn && deleteConfirmModal) {
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteConfirmModal.close();
-        });
-    }
-
-    if (confirmDeleteBtn && deleteConfirmModal) {
-        confirmDeleteBtn.addEventListener('click', () => {
-            if (!materialIdToDelete) return;
-
-            confirmDeleteBtn.disabled = true;
-            confirmDeleteBtn.textContent = 'Deleting...';
-
-            fetch(`/api/materials/${materialIdToDelete}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Delete failed');
-                loadMaterials();
-                deleteConfirmModal.close();
-            })
-            .catch(error => {
-                console.error('Delete Error:', error);
-                alert("Failed to delete material.");
-            })
-            .finally(() => {
-                confirmDeleteBtn.disabled = false;
-                confirmDeleteBtn.textContent = 'Delete';
-                materialIdToDelete = null;
-            });
-        });
-    }
+    let deleteId = null;
 
     function handleDelete(e) {
-        const id = e.currentTarget.getAttribute('data-id');
-        if (!id || !deleteConfirmModal) return;
-
-        materialIdToDelete = id;
+        deleteId = e.currentTarget.dataset.id;
         deleteConfirmModal.showModal();
     }
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', () => deleteConfirmModal.close());
 
-    // --- Global Image Modal Overlay Overrides ---
-    // Specifically because image modal logic is usually bound in main.js,
-    // we just make sure .thumbnail-img-inline works. Since it attaches to document.body in main.js
-    // it will automatically work here as I set class="material-image thumbnail-img-inline"
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!deleteId) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/materials/${deleteId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    deleteConfirmModal.close();
+                    loadMaterials();
+                }
+            } catch (err) { console.error(err); }
+        });
+    }
 
-    // Load materials on initialization
     loadMaterials();
 });
