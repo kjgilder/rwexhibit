@@ -74,9 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper to format media path (handles both local relative paths and remote Vercel Blob URLs)
     function formatPath(path) {
         if (!path) return '';
-        if (path.startsWith('http')) return path;
+        const trimmedPath = path.trim();
+        // If it's an absolute URL (starts with http), return it directly
+        if (trimmedPath.startsWith('http')) return trimmedPath;
+        
         // Ensure no double slashes when prepending API_BASE
-        const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        const cleanPath = trimmedPath.startsWith('/') ? trimmedPath.slice(1) : trimmedPath;
         return API_BASE ? `${API_BASE}/${cleanPath}` : `/${cleanPath}`;
     }
 
