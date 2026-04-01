@@ -5,6 +5,7 @@ import time
 from http.server import BaseHTTPRequestHandler
 from vercel_blob import put, delete as blob_delete
 import redis
+from urllib.parse import urlparse, parse_qs
 
 # Helper to get the Redis client using the standard REDIS_URL
 def get_kv():
@@ -47,13 +48,19 @@ class handler(BaseHTTPRequestHandler):
             kv = get_kv()
             content_length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(content_length)
-            raw_path = self.path.split('?')[0].rstrip('/')
             
+            parsed = urlparse(self.path)
+            raw_path = parsed.path.rstrip('/')
+            params = parse_qs(parsed.query)
+            
+            material_id = params.get('id', [None])[0]
+            action = params.get('action', [None])[0]
+
             # Diagnostic Log
-            print(f"POST Request: Path={raw_path}")
+            print(f"POST Request: Path={raw_path}, ID={material_id}, Action={action}")
 
             # 1. Reorder
-            if '/reorder' in raw_path:
+            if action == 'reorder':
                 new_order_ids = json.loads(body)
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
@@ -66,41 +73,37 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                 return
 
-            # 2. Update (e.g. /api/materials/UUID)
-            if '/api/materials/' in raw_path:
-                material_id = raw_path.split('/')[-1].strip().lower()
-                if material_id and material_id != 'materials':
-                    update_data = json.loads(body)
-                    data = kv.get("materials")
-                    materials = json.loads(data) if data else []
-                    
-                    found_idx = -1
-                    for i, m in enumerate(materials):
-                        if m.get("id", "").strip().lower() == material_id:
-                            found_idx = i
-                            break
-                    
-                    if found_idx != -1:
-                        m = materials[found_idx]
-                        if "title" in update_data: m["title"] = update_data["title"]
-                        if "items" in update_data:
-                            for u_item in update_data["items"]:
-                                idx = u_item.get("index")
-                                if idx is not None and idx < len(m.get("items", [])):
-                                    m["items"][idx]["description"] = u_item["description"]
-                        kv.set("materials", json.dumps(materials))
-                        self._set_headers(200)
-                        self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-                        return
-                    else:
-                        db_ids = [m.get("id","") for m in materials[:5]]
-                        print(f"Update Error: ID {material_id} not found. Samples in DB: {db_ids}")
-                        self._set_headers(404)
-                        self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
-                        return
+            # 2. Update (JSON)
+            if material_id:
+                update_data = json.loads(body)
+                data = kv.get("materials")
+                materials = json.loads(data) if data else []
+                
+                found_idx = -1
+                for i, m in enumerate(materials):
+                    if m.get("id", "").strip().lower() == material_id.lower():
+                        found_idx = i
+                        break
+                
+                if found_idx != -1:
+                    m = materials[found_idx]
+                    if "title" in update_data: m["title"] = update_data["title"]
+                    if "items" in update_data:
+                        for u_item in update_data["items"]:
+                            idx = u_item.get("index")
+                            if idx is not None and idx < len(m.get("items", [])):
+                                m["items"][idx]["description"] = u_item["description"]
+                    kv.set("materials", json.dumps(materials))
+                    self._set_headers(200)
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                    return
+                else:
+                    self._set_headers(404)
+                    self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
+                    return
 
             # 3. Create (Multipart)
-            if raw_path.endswith('/api/materials'):
+            if raw_path == '/api/materials':
                 import email.message
                 content_type = self.headers.get('Content-Type')
                 msg = email.message.Message()
@@ -144,31 +147,33 @@ class handler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         try:
-            raw_path = self.path.split('?')[0].rstrip('/')
-            print(f"DELETE Request: Path={raw_path}")
+            parsed = urlparse(self.path)
+            raw_path = parsed.path.rstrip('/')
+            params = parse_qs(parsed.query)
             
-            if '/api/materials/' in raw_path:
-                material_id = raw_path.split('/')[-1].strip().lower()
+            material_id = params.get('id', [None])[0]
+            print(f"DELETE Request: Path={raw_path}, ID={material_id}")
+            
+            if material_id:
                 kv = get_kv()
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
                 
-                item_to_delete = next((m for m in materials if m.get("id", "").strip().lower() == material_id), None)
+                item_to_delete = next((m for m in materials if m.get("id", "").strip().lower() == material_id.lower()), None)
                 if not item_to_delete:
-                    db_ids = [m.get("id","") for m in materials[:5]]
-                    print(f"Delete Error: ID {material_id} not found in {db_ids}")
                     self._set_headers(404)
                     self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
                     return
                 for item in item_to_delete.get("items", []):
                     try: blob_delete(item["path"])
                     except: pass
-                materials = [m for m in materials if m.get("id", "").strip().lower() != material_id]
+                materials = [m for m in materials if m.get("id", "").strip().lower() != material_id.lower()]
                 kv.set("materials", json.dumps(materials))
                 self._set_headers(200)
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                 return
             self._set_headers(404)
+            self.wfile.write(json.dumps({"error": "ID not provided"}).encode('utf-8'))
         except Exception as e:
             print(f"DELETE Error: {e}")
             self._set_headers(500)

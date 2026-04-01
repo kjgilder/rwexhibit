@@ -373,7 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const res = await fetch(`${API_BASE}/api/materials/${currentEditId}`, {
+                const url = `${API_BASE}/api/materials?id=${encodeURIComponent(currentEditId)}`;
+                const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -416,8 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handle: '.drag-handle',
             ghostClass: 'sortable-ghost',
             onEnd: () => {
-                const ids = Array.from(materialsContainer.querySelectorAll('.material-card')).map(c => c.dataset.id);
-                fetch(`${API_BASE}/api/materials/reorder`, {
+                const url = `${API_BASE}/api/materials?action=reorder`;
+                fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(ids)
@@ -442,7 +443,8 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!deleteId) return;
             try {
-                const res = await fetch(`${API_BASE}/api/materials/${deleteId}`, { method: 'DELETE' });
+                const url = `${API_BASE}/api/materials?id=${encodeURIComponent(deleteId)}`;
+                const res = await fetch(url, { method: 'DELETE' });
                 if (res.ok) {
                     deleteConfirmModal.close();
                     loadMaterials();
