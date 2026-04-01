@@ -50,10 +50,10 @@ class handler(BaseHTTPRequestHandler):
             raw_path = self.path.split('?')[0].rstrip('/')
             
             # Diagnostic Log
-            print(f"POST Request: Path={raw_path}, BodySize={content_length}")
+            print(f"POST Request: Path={raw_path}")
 
             # 1. Reorder
-            if raw_path == '/api/materials/reorder':
+            if '/reorder' in raw_path:
                 new_order_ids = json.loads(body)
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
@@ -68,7 +68,7 @@ class handler(BaseHTTPRequestHandler):
 
             # 2. Update (e.g. /api/materials/UUID)
             if '/api/materials/' in raw_path:
-                material_id = raw_path.split('/')[-1].strip()
+                material_id = raw_path.split('/')[-1].strip().lower()
                 if material_id and material_id != 'materials':
                     update_data = json.loads(body)
                     data = kv.get("materials")
@@ -76,7 +76,7 @@ class handler(BaseHTTPRequestHandler):
                     
                     found_idx = -1
                     for i, m in enumerate(materials):
-                        if m.get("id", "").strip() == material_id:
+                        if m.get("id", "").strip().lower() == material_id:
                             found_idx = i
                             break
                     
@@ -93,13 +93,14 @@ class handler(BaseHTTPRequestHandler):
                         self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                         return
                     else:
-                        print(f"Update Error: ID {material_id} not found among {len(materials)} items.")
+                        db_ids = [m.get("id","") for m in materials[:5]]
+                        print(f"Update Error: ID {material_id} not found. Samples in DB: {db_ids}")
                         self._set_headers(404)
                         self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
                         return
 
             # 3. Create (Multipart)
-            if raw_path == '/api/materials':
+            if raw_path.endswith('/api/materials'):
                 import email.message
                 content_type = self.headers.get('Content-Type')
                 msg = email.message.Message()
@@ -147,21 +148,22 @@ class handler(BaseHTTPRequestHandler):
             print(f"DELETE Request: Path={raw_path}")
             
             if '/api/materials/' in raw_path:
-                material_id = raw_path.split('/')[-1].strip()
+                material_id = raw_path.split('/')[-1].strip().lower()
                 kv = get_kv()
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
                 
-                item_to_delete = next((m for m in materials if m.get("id", "").strip() == material_id), None)
+                item_to_delete = next((m for m in materials if m.get("id", "").strip().lower() == material_id), None)
                 if not item_to_delete:
-                    print(f"Delete Error: Material ID {material_id} not found.")
+                    db_ids = [m.get("id","") for m in materials[:5]]
+                    print(f"Delete Error: ID {material_id} not found in {db_ids}")
                     self._set_headers(404)
                     self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
                     return
                 for item in item_to_delete.get("items", []):
                     try: blob_delete(item["path"])
                     except: pass
-                materials = [m for m in materials if m.get("id", "").strip() != material_id]
+                materials = [m for m in materials if m.get("id", "").strip().lower() != material_id]
                 kv.set("materials", json.dumps(materials))
                 self._set_headers(200)
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
