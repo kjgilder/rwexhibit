@@ -418,11 +418,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ghostClass: 'sortable-ghost',
             onEnd: () => {
                 const url = `${API_BASE}/api/materials?action=reorder`;
+                const ids = Array.from(materialsContainer.querySelectorAll('.material-card')).map(card => card.dataset.id);
                 fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(ids)
-                }).catch(err => console.error(err));
+                })
+                .then(res => {
+                    if (!res.ok) console.error('Reorder save failed');
+                })
+                .catch(err => console.error(err));
             }
         });
     }
