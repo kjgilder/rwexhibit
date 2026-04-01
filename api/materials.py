@@ -47,10 +47,13 @@ class handler(BaseHTTPRequestHandler):
             kv = get_kv()
             content_length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(content_length)
-            path = self.path.rstrip('/')
+            raw_path = self.path.split('?')[0].rstrip('/')
+            
+            # Diagnostic Log
+            print(f"POST Request: Path={raw_path}, BodySize={content_length}")
 
             # 1. Reorder
-            if path == '/api/materials/reorder':
+            if raw_path == '/api/materials/reorder':
                 new_order_ids = json.loads(body)
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
@@ -64,33 +67,39 @@ class handler(BaseHTTPRequestHandler):
                 return
 
             # 2. Update (e.g. /api/materials/UUID)
-            if path.startswith('/api/materials/') and len(path) > 15:
-                material_id = path.split('/')[-1]
-                update_data = json.loads(body)
-                data = kv.get("materials")
-                materials = json.loads(data) if data else []
-                updated = False
-                for m in materials:
-                    if m["id"] == material_id:
+            if '/api/materials/' in raw_path:
+                material_id = raw_path.split('/')[-1].strip()
+                if material_id and material_id != 'materials':
+                    update_data = json.loads(body)
+                    data = kv.get("materials")
+                    materials = json.loads(data) if data else []
+                    
+                    found_idx = -1
+                    for i, m in enumerate(materials):
+                        if m.get("id", "").strip() == material_id:
+                            found_idx = i
+                            break
+                    
+                    if found_idx != -1:
+                        m = materials[found_idx]
                         if "title" in update_data: m["title"] = update_data["title"]
                         if "items" in update_data:
                             for u_item in update_data["items"]:
                                 idx = u_item.get("index")
                                 if idx is not None and idx < len(m.get("items", [])):
                                     m["items"][idx]["description"] = u_item["description"]
-                        updated = True
-                        break
-                if updated:
-                    kv.set("materials", json.dumps(materials))
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-                else:
-                    self._set_headers(404)
-                    self.wfile.write(json.dumps({"error": "Material not found"}).encode('utf-8'))
-                return
+                        kv.set("materials", json.dumps(materials))
+                        self._set_headers(200)
+                        self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                        return
+                    else:
+                        print(f"Update Error: ID {material_id} not found among {len(materials)} items.")
+                        self._set_headers(404)
+                        self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
+                        return
 
             # 3. Create (Multipart)
-            if path == '/api/materials':
+            if raw_path == '/api/materials':
                 import email.message
                 content_type = self.headers.get('Content-Type')
                 msg = email.message.Message()
@@ -126,7 +135,7 @@ class handler(BaseHTTPRequestHandler):
                 return
             
             self._set_headers(404)
-            self.wfile.write(json.dumps({"error": "Unknown POST route"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"error": f"Unknown POST route: {raw_path}"}).encode('utf-8'))
         except Exception as e:
             print(f"POST Error: {e}")
             self._set_headers(500)
@@ -134,21 +143,25 @@ class handler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         try:
-            path = self.path.rstrip('/')
-            if path.startswith('/api/materials/') and len(path) > 15:
-                material_id = path.split('/')[-1]
+            raw_path = self.path.split('?')[0].rstrip('/')
+            print(f"DELETE Request: Path={raw_path}")
+            
+            if '/api/materials/' in raw_path:
+                material_id = raw_path.split('/')[-1].strip()
                 kv = get_kv()
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
-                item_to_delete = next((m for m in materials if m["id"] == material_id), None)
+                
+                item_to_delete = next((m for m in materials if m.get("id", "").strip() == material_id), None)
                 if not item_to_delete:
+                    print(f"Delete Error: Material ID {material_id} not found.")
                     self._set_headers(404)
-                    self.wfile.write(json.dumps({"error": "Material not found"}).encode('utf-8'))
+                    self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
                     return
                 for item in item_to_delete.get("items", []):
                     try: blob_delete(item["path"])
                     except: pass
-                materials = [m for m in materials if m["id"] != material_id]
+                materials = [m for m in materials if m.get("id", "").strip() != material_id]
                 kv.set("materials", json.dumps(materials))
                 self._set_headers(200)
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
