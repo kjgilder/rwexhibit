@@ -55,14 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (imageModal && modalImage && closeImageModal) {
         // Use capture phase so we intercept BEFORE the native <summary> toggle fires.
-        // e.preventDefault() here prevents <details> from toggling when the img is the target.
         document.body.addEventListener('click', (e) => {
             const img = e.target.closest('img.thumbnail-img-inline');
             if (img) {
                 const src = img.getAttribute('src');
                 const alt = img.getAttribute('alt');
 
-                // If image is inside a <summary>, prevent the accordion from toggling
+                // Prevent details from toggling
                 if (img.closest('summary')) {
                     e.preventDefault();
                 }
@@ -73,21 +72,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (modalCaption) {
                         modalCaption.textContent = alt || '';
                     }
+                    
+                    // Lock scrolling
+                    document.body.style.overflow = 'hidden';
                     imageModal.showModal();
                 }
             }
-        }, true); // true = capture phase
+        }, true);
 
         const closeModalFunc = () => {
+            // Unlock scrolling
+            document.body.style.overflow = '';
+            
             imageModal.close();
-            // Clear src slightly after transition to avoid flicker
             setTimeout(() => { 
                 modalImage.src = ''; 
                 if (modalCaption) modalCaption.textContent = '';
             }, 300);
         };
 
-        closeImageModal.addEventListener('click', closeModalFunc);
+        closeImageModal.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeModalFunc();
+        });
 
         // Close on backdrop click
         imageModal.addEventListener('click', (e) => {
@@ -95,8 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeModalFunc();
             }
         });
-
-        // Add keyboard support (Escape key is handled natively by <dialog>, we handle enter/space on the close button natively too)
     }
 
     // Document Carousel Logic
