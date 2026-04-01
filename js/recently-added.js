@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPdf = it.path.toLowerCase().endsWith('.pdf');
             const thumbHTML = isPdf 
                 ? `<svg viewBox="0 0 24 24" width="24" height="24" style="fill:none; stroke:currentColor; stroke-width:1;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
-                : `<img src="${API_BASE}/${it.path}" style="width:100%; height:100%; object-fit:cover;">`;
+                : `<img src="${formatPath(it.path)}" style="width:100%; height:100%; object-fit:cover;">`;
 
             row.innerHTML = `
                 <div class="staged-thumb" style="width:60px; height:45px;">${thumbHTML}</div>
