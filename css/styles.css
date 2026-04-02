@@ -1,3 +1,4 @@
+/* Roger Williams Exhibit - Main Stylesheet (Redeploy V2.2) */
 /* Reset & Base Styles */
 * {
     box-sizing: border-box;
@@ -2063,33 +2064,9 @@ details>summary {
 }
 
 /* =========================================
-   Desktop Image Enhancements (Resizable)
+   Polished Desktop Layout (Vertical Stack)
    ========================================= */
 @media (min-width: 1024px) {
-    .desktop-resizable-wrapper {
-        display: inline-block;
-        position: relative;
-        resize: both;
-        overflow: auto;
-        border: 2px solid var(--color-border-light);
-        padding: 5px;
-        background: #fff;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        margin-bottom: 15px;
-        min-width: 150px;
-        min-height: 100px;
-        max-width: 100%;
-        width: 450px; /* Sensible default start width for desktop cards */
-    }
-
-    .desktop-resizable-wrapper img,
-    .desktop-resizable-wrapper iframe {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain;
-        display: block;
-    }
-
     .thumbnail-img-inline {
         cursor: zoom-in !important;
         max-width: 450px;
