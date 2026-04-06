@@ -142,7 +142,7 @@ img {
     align-items: center;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .header-branding {
         flex-direction: column;
         align-items: flex-start;
@@ -1411,7 +1411,7 @@ details>summary {
 
 
 /* Base Responsive adjustments for Timeline */
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .container {
         padding: 0 16px;
     }
@@ -2048,7 +2048,7 @@ details>summary {
     letter-spacing: 0.5px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .modal-body {
         padding: 30px 20px;
     }
@@ -2066,7 +2066,7 @@ details>summary {
 /* =========================================
    Polished Desktop Layout (Vertical Stack)
    ========================================= */
-@media (min-width: 1024px) {
+@media (min-width: 1024px), (pointer: fine) {
     .thumbnail-img-inline {
         cursor: zoom-in !important;
         max-width: 450px;
@@ -2171,5 +2171,62 @@ details>summary {
         background: var(--color-primary-gold);
         color: white;
         transform: scale(1.1) rotate(90deg);
+    }
+}
+
+/* =========================================
+   Mobile adjustments for document previews
+   Applies to phones and smaller screens
+========================================= */
+@media (max-width: 600px) and (pointer: coarse) {
+
+    /* Reduce the inner spacing of each carousel slide
+       so the content takes up less vertical space */
+    .carousel-slide {
+        padding: 12px;
+    }
+
+    /* Make the document/image preview area shorter on mobile
+       so each carousel item is not too tall */
+    .carousel-media-wrapper {
+        height: 260px;
+    }
+
+    /* Make the caption slightly smaller and closer to the media
+       to save space on smaller screens */
+    .carousel-caption {
+        margin-top: 10px;
+        font-size: 0.8rem;
+    }
+
+    /* Shrink the previous/next navigation buttons
+       so they fit better on phone screens */
+    .carousel-nav {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Move the left arrow slightly closer to the edge
+       so it covers less of the preview */
+    .carousel-nav.prev {
+        left: 6px;
+    }
+
+    /* Move the right arrow slightly closer to the edge
+       so it covers less of the preview */
+    .carousel-nav.next {
+        right: 6px;
+    }
+
+    /* Reduce the bottom spacing under the pagination dots
+       to keep the carousel more compact */
+    .carousel-pagination {
+        padding: 0 0 12px;
+    }
+
+    /* Hide the single PDF preview box on mobile
+       because embedded PDFs do not display well on phones */
+    .responsive-document-box {
+        display: none;
     }
 }
