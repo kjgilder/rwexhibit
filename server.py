@@ -174,8 +174,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed_path = urlparse(self.path)
+        params = parse_qs(parsed_path.query)
 
-        if parsed_path.path == "/api/admin/me":
+        if parsed_path.path == "/api/admin" and params.get("action", [None])[0] == "me":
             email = _get_session_email(self.headers)
             if not email:
                 self._set_headers(401)
@@ -200,8 +201,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed_path = urlparse(self.path)
+        params = parse_qs(parsed_path.query)
 
-        if parsed_path.path == "/api/admin/login":
+        if parsed_path.path == "/api/admin" and params.get("action", [None])[0] == "login":
             content_length = int(self.headers.get("Content-Length", 0))
             post_data = self.rfile.read(content_length)
             try:
@@ -227,7 +229,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
             return
 
-        if parsed_path.path == "/api/admin/logout":
+        if parsed_path.path == "/api/admin" and params.get("action", [None])[0] == "logout":
             _destroy_session(self.headers)
             self._set_headers(
                 200,
@@ -236,7 +238,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
             return
 
-        if parsed_path.path == "/api/admin/change-password":
+        if parsed_path.path == "/api/admin" and params.get("action", [None])[0] == "change-password":
             email = _get_session_email(self.headers)
             if not email:
                 self._set_headers(401)
