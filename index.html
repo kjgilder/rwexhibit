@@ -76,14 +76,31 @@
                 <button id="close-dialog" class="btn-close">Close</button>
             </div>
         </dialog>
+
+        <!-- QR Scanner Modal -->
+        <dialog id="qr-scan-dialog" class="site-dialog">
+            <div class="dialog-inner">
+                <h2 style="color: var(--color-primary-black); font-size: 1.5rem; margin-bottom: 1rem;">Scan QR Code</h2>
+                <div style="border: 1px solid var(--color-primary-gold); border-radius: 8px; overflow: hidden; background: #000;">
+                    <video id="qr-video" playsinline style="width: 100%; height: auto; display: block;"></video>
+                </div>
+                <p id="qr-scan-status" style="margin-top: 1rem; font-size: 0.95rem; color: var(--color-secondary-dark-gray);">
+                    Point your camera at the QR code.
+                </p>
+                <div style="display:flex; gap: 10px; justify-content:center; margin-top: 1rem;">
+                    <button id="close-qr-scan" class="btn-close" type="button">Close</button>
+                </div>
+            </div>
+        </dialog>
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
+            <p>&copy; 2026 Vanderbilt University - Peabody College</p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 
