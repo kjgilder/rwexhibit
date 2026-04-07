@@ -224,16 +224,26 @@ img {
 
 /* Home Page Specifics */
 .welcome-section {
+    background-image:
+            linear-gradient(rgba(50, 50, 50, 0.7), rgba(50, 50, 50, 0.7)),
+            url('../assets/RWE.png');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
     padding: var(--spacing-sm) var(--spacing-md);
     text-align: left;
     background-color: var(--color-primary-white);
+    min-height: 35rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .welcome-text {
     font-family: var(--font-heading);
     font-size: 4rem;
     /* Larger as per mock */
-    color: var(--color-primary-black);
+    color: var(--color-primary-white);
     line-height: 1;
     margin-bottom: var(--spacing-lg);
 }
@@ -241,7 +251,7 @@ img {
 .welcome-subtext {
     font-family: var(--font-body);
     font-size: 1.1rem;
-    color: var(--color-secondary-dark-gray);
+    color: var(--color-secondary-light-gray);
     max-width: 600px;
 }
 
@@ -329,7 +339,7 @@ img {
 
 .qr-content {
     border: 1px solid var(--color-primary-gold);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     /* Reduced padding */
     display: flex;
     flex-direction: column;
@@ -352,7 +362,7 @@ img {
 
 
 .card-timeline {
-    background-image: url('../assets/timeline-bg.png');
+    background-image: url('../assets/timeline-bkgd.jpeg');
     /* Ensure text is readable on light background if it's light */
 }
 
@@ -363,12 +373,12 @@ img {
 }
 
 .card-timeline::before {
-    background: linear-gradient(to bottom, rgba(230, 220, 200, 0.3) 0%, rgba(230, 220, 200, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(230, 220, 200, 0.15) 0%, rgba(230, 220, 200, 0.4) 100%);
     /* Lighter overlay for parchment */
 }
 
 .card-about {
-    background-image: url('../assets/about-bg.jpg');
+    background-image: url('../assets/about-bkgd.jpg');
 }
 
 /* Timeline Layout (retained/tweaked) */
