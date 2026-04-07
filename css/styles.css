@@ -141,7 +141,7 @@ img {
     align-items: center;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .header-branding {
         flex-direction: column;
         align-items: flex-start;
@@ -222,16 +222,26 @@ img {
 
 /* Home Page Specifics */
 .welcome-section {
+    background-image:
+            linear-gradient(rgba(50, 50, 50, 0.7), rgba(50, 50, 50, 0.7)),
+            url('../assets/RWE.png');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
     padding: var(--spacing-sm) var(--spacing-md);
     text-align: left;
     background-color: var(--color-primary-white);
+    min-height: 35rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .welcome-text {
     font-family: var(--font-heading);
     font-size: 4rem;
     /* Larger as per mock */
-    color: var(--color-primary-black);
+    color: var(--color-primary-white);
     line-height: 1;
     margin-bottom: var(--spacing-lg);
 }
@@ -239,7 +249,7 @@ img {
 .welcome-subtext {
     font-family: var(--font-body);
     font-size: 1.1rem;
-    color: var(--color-secondary-dark-gray);
+    color: var(--color-secondary-light-gray);
     max-width: 600px;
 }
 
@@ -327,7 +337,7 @@ img {
 
 .qr-content {
     border: 1px solid var(--color-primary-gold);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     /* Reduced padding */
     display: flex;
     flex-direction: column;
@@ -350,7 +360,7 @@ img {
 
 
 .card-timeline {
-    background-image: url('../assets/timeline-bg.png');
+    background-image: url('../assets/timeline-bkgd.jpeg');
     /* Ensure text is readable on light background if it's light */
 }
 
@@ -361,12 +371,12 @@ img {
 }
 
 .card-timeline::before {
-    background: linear-gradient(to bottom, rgba(230, 220, 200, 0.3) 0%, rgba(230, 220, 200, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(230, 220, 200, 0.15) 0%, rgba(230, 220, 200, 0.4) 100%);
     /* Lighter overlay for parchment */
 }
 
 .card-about {
-    background-image: url('../assets/about-bg.jpg');
+    background-image: url('../assets/about-bkgd.jpg');
 }
 
 /* Timeline Layout (retained/tweaked) */
@@ -1409,7 +1419,7 @@ details>summary {
 
 
 /* Base Responsive adjustments for Timeline */
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .container {
         padding: 0 16px;
     }
@@ -2046,7 +2056,7 @@ details>summary {
     letter-spacing: 0.5px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
     .modal-body {
         padding: 30px 20px;
     }
@@ -2064,7 +2074,7 @@ details>summary {
 /* =========================================
    Polished Desktop Layout (Vertical Stack)
    ========================================= */
-@media (min-width: 1024px) {
+@media (min-width: 1024px), (pointer: fine) {
     .thumbnail-img-inline {
         cursor: zoom-in !important;
         max-width: 450px;
@@ -2169,5 +2179,62 @@ details>summary {
         background: var(--color-primary-gold);
         color: white;
         transform: scale(1.1) rotate(90deg);
+    }
+}
+
+/* =========================================
+   Mobile adjustments for document previews
+   Applies to phones and smaller screens
+========================================= */
+@media (max-width: 600px) and (pointer: coarse) {
+
+    /* Reduce the inner spacing of each carousel slide
+       so the content takes up less vertical space */
+    .carousel-slide {
+        padding: 12px;
+    }
+
+    /* Make the document/image preview area shorter on mobile
+       so each carousel item is not too tall */
+    .carousel-media-wrapper {
+        height: 260px;
+    }
+
+    /* Make the caption slightly smaller and closer to the media
+       to save space on smaller screens */
+    .carousel-caption {
+        margin-top: 10px;
+        font-size: 0.8rem;
+    }
+
+    /* Shrink the previous/next navigation buttons
+       so they fit better on phone screens */
+    .carousel-nav {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Move the left arrow slightly closer to the edge
+       so it covers less of the preview */
+    .carousel-nav.prev {
+        left: 6px;
+    }
+
+    /* Move the right arrow slightly closer to the edge
+       so it covers less of the preview */
+    .carousel-nav.next {
+        right: 6px;
+    }
+
+    /* Reduce the bottom spacing under the pagination dots
+       to keep the carousel more compact */
+    .carousel-pagination {
+        padding: 0 0 12px;
+    }
+
+    /* Hide the single PDF preview box on mobile
+       because embedded PDFs do not display well on phones */
+    .responsive-document-box {
+        display: none;
     }
 }
