@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
-            fetch(`${API_BASE}/api/admin/login`, {
+            fetch(`${API_BASE}/api/admin?action=login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const isLoggedInNow = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
             if (isLoggedInNow) {
-                fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', credentials: 'include' })
+                fetch(`${API_BASE}/api/admin?action=logout`, { method: 'POST', credentials: 'include' })
                     .finally(() => disableAdminMode());
             } else {
                 loginError.style.display = 'none';
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const res = await fetch(`${API_BASE}/api/admin/change-password`, {
+                const res = await fetch(`${API_BASE}/api/admin?action=change-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

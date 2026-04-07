@@ -4,7 +4,7 @@ import time
 import secrets
 import hashlib
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import redis
 
 # Security config
@@ -104,9 +104,10 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             parsed_path = urlparse(self.path)
-            raw_path = parsed_path.path.rstrip('/')
+            params = parse_qs(parsed_path.query)
+            action = params.get("action", [None])[0]
             
-            if raw_path == "/api/admin/me":
+            if action == "me":
                 email = _get_session_email(self.headers)
                 if not email:
                     self._set_headers(401)
@@ -117,7 +118,7 @@ class handler(BaseHTTPRequestHandler):
                 return
             
             self._set_headers(404)
-            self.wfile.write(json.dumps({"error": "Path not found"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"error": "Path or action not found"}).encode('utf-8'))
         except Exception as e:
             self._set_headers(500)
             self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
@@ -125,9 +126,10 @@ class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             parsed_path = urlparse(self.path)
-            raw_path = parsed_path.path.rstrip('/')
+            params = parse_qs(parsed_path.query)
+            action = params.get("action", [None])[0]
             
-            if raw_path == "/api/admin/login":
+            if action == "login":
                 content_length = int(self.headers.get("Content-Length", 0))
                 post_data = self.rfile.read(content_length)
                 payload = json.loads(post_data or b"{}")
@@ -150,7 +152,7 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
                 return
 
-            if raw_path == "/api/admin/logout":
+            if action == "logout":
                 _destroy_session(self.headers)
                 self._set_headers(
                     200,
@@ -159,7 +161,7 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
                 return
 
-            if raw_path == "/api/admin/change-password":
+            if action == "change-password":
                 email = _get_session_email(self.headers)
                 if not email:
                     self._set_headers(401)
@@ -190,7 +192,7 @@ class handler(BaseHTTPRequestHandler):
                 return
 
             self._set_headers(404)
-            self.wfile.write(json.dumps({"error": f"Unknown POST route: {raw_path}"}).encode('utf-8'))
+            self.wfile.write(json.dumps({"error": f"Unknown POST action: {action}"}).encode('utf-8'))
             
         except Exception as e:
             self._set_headers(500)
