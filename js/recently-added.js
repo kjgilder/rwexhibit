@@ -30,41 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-            // Local dev uses server-side auth so admins can change their password.
-            if (isLocal) {
-                fetch(`${API_BASE}/api/admin/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email, password })
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('Invalid credentials');
-                    return res.json();
-                })
-                .then(() => {
-                    sessionStorage.setItem('rwexhibit_admin_logged_in', 'true');
-                    loginModal.close();
-                    enableAdminMode();
-                    loadMaterials();
-                })
-                .catch(() => {
-                    loginError.style.display = 'block';
-                });
-                return;
-            }
-
-            // Hosted builds may not have the Python server available.
-            if (email === 'ally.jacobs@vanderbilt.edu' && password === 'allyjacobs') {
+            fetch(`${API_BASE}/api/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Invalid credentials');
+                return res.json();
+            })
+            .then(() => {
                 sessionStorage.setItem('rwexhibit_admin_logged_in', 'true');
                 loginModal.close();
                 enableAdminMode();
                 loadMaterials();
-            } else {
+            })
+            .catch(() => {
                 loginError.style.display = 'block';
-            }
+            });
         });
     }
 
@@ -89,14 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const isLoggedInNow = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
             if (isLoggedInNow) {
-                // Local logout clears the server session cookie.
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                if (isLocal) {
-                    fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', credentials: 'include' })
-                        .finally(() => disableAdminMode());
-                    return;
-                }
-                disableAdminMode();
+                fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', credentials: 'include' })
+                    .finally(() => disableAdminMode());
             } else {
                 loginError.style.display = 'none';
                 loginForm.reset();
@@ -174,11 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            if (!isLocal) {
-                showStatus('Password change is only available when running the local admin server.', false);
-                return;
-            }
+            // Password changes are universally powered by the backend.
 
             const submitBtn = document.getElementById('change-password-submit');
             if (submitBtn) {
