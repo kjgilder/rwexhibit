@@ -5,15 +5,106 @@ import os
 import uuid
 import time
 from urllib.parse import urlparse
+from urllib.parse import parse_qs
 import email.message
+import hashlib
+import secrets
 
 PORT = 8000
 DATA_FILE = "data/materials.json"
 UPLOAD_DIR = "assets/uploads"
+ADMIN_FILE = "data/admin.json"
+SESSION_TTL_SECONDS = 60 * 60 * 8
 
 # Ensure directories exist
 os.makedirs("data", exist_ok=True)
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# --- Admin credentials + sessions (local server only) ---
+_sessions = {}  # token -> { "email": str, "expiresAt": int }
+
+
+def _now() -> int:
+    return int(time.time())
+
+
+def _hash_password(password: str, *, salt_hex: str | None = None, iterations: int = 200_000) -> dict:
+    salt = bytes.fromhex(salt_hex) if salt_hex else secrets.token_bytes(16)
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
+    return {
+        "salt": salt.hex(),
+        "iterations": iterations,
+        "hash": dk.hex(),
+    }
+
+
+def _verify_password(password: str, record: dict) -> bool:
+    try:
+        expected = bytes.fromhex(record["hash"])
+        salt = bytes.fromhex(record["salt"])
+        iterations = int(record["iterations"])
+    except Exception:
+        return False
+    actual = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
+    return secrets.compare_digest(actual, expected)
+
+
+def _load_admin() -> dict:
+    if not os.path.exists(ADMIN_FILE):
+        # Default admin is migrated from the original frontend-only credentials.
+        default_email = "ally.jacobs@vanderbilt.edu"
+        default_password = "allyjacobs"
+        record = _hash_password(default_password)
+        admin = {"email": default_email, **record}
+        with open(ADMIN_FILE, "w") as f:
+            json.dump(admin, f, indent=4)
+        return admin
+    with open(ADMIN_FILE, "r") as f:
+        return json.load(f)
+
+
+def _save_admin(admin: dict) -> None:
+    with open(ADMIN_FILE, "w") as f:
+        json.dump(admin, f, indent=4)
+
+
+def _parse_cookies(cookie_header: str | None) -> dict:
+    if not cookie_header:
+        return {}
+    cookies = {}
+    for part in cookie_header.split(";"):
+        if "=" in part:
+            k, v = part.split("=", 1)
+            cookies[k.strip()] = v.strip()
+    return cookies
+
+
+def _get_session_email(headers) -> str | None:
+    cookies = _parse_cookies(headers.get("Cookie"))
+    token = cookies.get("rwexhibit_session")
+    if not token:
+        return None
+    session = _sessions.get(token)
+    if not session:
+        return None
+    if session.get("expiresAt", 0) < _now():
+        _sessions.pop(token, None)
+        return None
+    return session.get("email")
+
+
+def _create_session(email: str) -> str:
+    token = secrets.token_urlsafe(32)
+    _sessions[token] = {"email": email, "expiresAt": _now() + SESSION_TTL_SECONDS}
+    return token
+
+
+def _destroy_session(headers) -> None:
+    cookies = _parse_cookies(headers.get("Cookie"))
+    token = cookies.get("rwexhibit_session")
+    if token:
+        _sessions.pop(token, None)
+
 
 # Initialize JSON file if it doesn't exist
 if not os.path.exists(DATA_FILE):
@@ -67,12 +158,15 @@ else:
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     
-    def _set_headers(self, status=200, content_type="application/json"):
+    def _set_headers(self, status=200, content_type="application/json", extra_headers: dict | None = None):
         self.send_response(status)
         self.send_header('Content-type', content_type)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        if extra_headers:
+            for k, v in extra_headers.items():
+                self.send_header(k, v)
         self.end_headers()
 
     def do_OPTIONS(self):
@@ -80,6 +174,16 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed_path = urlparse(self.path)
+
+        if parsed_path.path == "/api/admin/me":
+            email = _get_session_email(self.headers)
+            if not email:
+                self._set_headers(401)
+                self.wfile.write(json.dumps({"error": "Not authenticated"}).encode("utf-8"))
+                return
+            self._set_headers(200)
+            self.wfile.write(json.dumps({"email": email}).encode("utf-8"))
+            return
         
         if parsed_path.path == '/api/materials':
             try:
@@ -96,6 +200,75 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed_path = urlparse(self.path)
+
+        if parsed_path.path == "/api/admin/login":
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                payload = json.loads(post_data or b"{}")
+                email = (payload.get("email") or "").strip().lower()
+                password = payload.get("password") or ""
+                admin = _load_admin()
+                if email != (admin.get("email") or "").strip().lower() or not _verify_password(password, admin):
+                    self._set_headers(401)
+                    self.wfile.write(json.dumps({"error": "Invalid credentials"}).encode("utf-8"))
+                    return
+
+                token = _create_session(admin["email"])
+                self._set_headers(
+                    200,
+                    extra_headers={
+                        "Set-Cookie": f"rwexhibit_session={token}; HttpOnly; SameSite=Lax; Path=/",
+                    },
+                )
+                self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
+            except Exception as e:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+            return
+
+        if parsed_path.path == "/api/admin/logout":
+            _destroy_session(self.headers)
+            self._set_headers(
+                200,
+                extra_headers={"Set-Cookie": "rwexhibit_session=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax"},
+            )
+            self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
+            return
+
+        if parsed_path.path == "/api/admin/change-password":
+            email = _get_session_email(self.headers)
+            if not email:
+                self._set_headers(401)
+                self.wfile.write(json.dumps({"error": "Not authenticated"}).encode("utf-8"))
+                return
+
+            content_length = int(self.headers.get("Content-Length", 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                payload = json.loads(post_data or b"{}")
+                old_password = payload.get("oldPassword") or ""
+                new_password = payload.get("newPassword") or ""
+
+                if len(new_password) < 8:
+                    self._set_headers(400)
+                    self.wfile.write(json.dumps({"error": "New password must be at least 8 characters"}).encode("utf-8"))
+                    return
+
+                admin = _load_admin()
+                if not _verify_password(old_password, admin):
+                    self._set_headers(401)
+                    self.wfile.write(json.dumps({"error": "Old password is incorrect"}).encode("utf-8"))
+                    return
+
+                updated = {"email": admin["email"], **_hash_password(new_password)}
+                _save_admin(updated)
+                self._set_headers(200)
+                self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
+            except Exception as e:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+            return
         
         if parsed_path.path == '/api/materials/reorder':
             content_length = int(self.headers.get('Content-Length', 0))

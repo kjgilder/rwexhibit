@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginError = document.getElementById('login-error');
     const adminSection = document.getElementById('admin-section');
     const reorderHint = document.getElementById('reorder-hint');
+    const changePasswordTrigger = document.getElementById('admin-change-password-trigger');
+    const changePasswordModal = document.getElementById('change-password-modal');
+    const closeChangePasswordDialog = document.getElementById('close-change-password-dialog');
+    const changePasswordForm = document.getElementById('change-password-form');
+    const changePasswordStatus = document.getElementById('change-password-status');
     
     // Check if already logged in via Session Storage
     const isLoggedIn = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
@@ -25,7 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+            // Local dev uses server-side auth so admins can change their password.
+            if (isLocal) {
+                fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Invalid credentials');
+                    return res.json();
+                })
+                .then(() => {
+                    sessionStorage.setItem('rwexhibit_admin_logged_in', 'true');
+                    loginModal.close();
+                    enableAdminMode();
+                    loadMaterials();
+                })
+                .catch(() => {
+                    loginError.style.display = 'block';
+                });
+                return;
+            }
+
+            // Hosted builds may not have the Python server available.
             if (email === 'ally.jacobs@vanderbilt.edu' && password === 'allyjacobs') {
                 sessionStorage.setItem('rwexhibit_admin_logged_in', 'true');
                 loginModal.close();
@@ -41,12 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if(adminSection) adminSection.classList.remove('hidden');
         if(reorderHint) reorderHint.classList.remove('hidden');
         if (adminTrigger) adminTrigger.textContent = 'Logout';
+        if (changePasswordTrigger) changePasswordTrigger.style.display = '';
     }
 
     function disableAdminMode() {
         if(adminSection) adminSection.classList.add('hidden');
         if(reorderHint) reorderHint.classList.add('hidden');
         if (adminTrigger) adminTrigger.textContent = 'Admin';
+        if (changePasswordTrigger) changePasswordTrigger.style.display = 'none';
         sessionStorage.removeItem('rwexhibit_admin_logged_in');
         loadMaterials();
     }
@@ -56,6 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const isLoggedInNow = sessionStorage.getItem('rwexhibit_admin_logged_in') === 'true';
             if (isLoggedInNow) {
+                // Local logout clears the server session cookie.
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                if (isLocal) {
+                    fetch(`${API_BASE}/api/admin/logout`, { method: 'POST', credentials: 'include' })
+                        .finally(() => disableAdminMode());
+                    return;
+                }
                 disableAdminMode();
             } else {
                 loginError.style.display = 'none';
@@ -93,6 +133,82 @@ document.addEventListener('DOMContentLoaded', () => {
     let stagedFiles = [];
     let materialsList = []; // Kept in memory for editing
     let sortableInstance = null;
+
+    // --- Change Password (Admin Only) ---
+    if (closeChangePasswordDialog && changePasswordModal) {
+        closeChangePasswordDialog.addEventListener('click', () => {
+            changePasswordModal.close();
+        });
+    }
+
+    if (changePasswordTrigger && changePasswordModal) {
+        // Hide by default; enableAdminMode() reveals it.
+        changePasswordTrigger.style.display = 'none';
+        changePasswordTrigger.addEventListener('click', () => {
+            if (changePasswordStatus) {
+                changePasswordStatus.style.display = 'none';
+                changePasswordStatus.textContent = '';
+                changePasswordStatus.style.color = '';
+            }
+            if (changePasswordForm) changePasswordForm.reset();
+            changePasswordModal.showModal();
+        });
+    }
+
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            const showStatus = (msg, ok) => {
+                if (!changePasswordStatus) return;
+                changePasswordStatus.textContent = msg;
+                changePasswordStatus.style.display = 'block';
+                changePasswordStatus.style.color = ok ? 'green' : '#d32f2f';
+            };
+
+            if (newPassword !== confirmPassword) {
+                showStatus('New passwords do not match.', false);
+                return;
+            }
+
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            if (!isLocal) {
+                showStatus('Password change is only available when running the local admin server.', false);
+                return;
+            }
+
+            const submitBtn = document.getElementById('change-password-submit');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Updating...';
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/change-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ oldPassword, newPassword })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    throw new Error(data.error || 'Password update failed');
+                }
+                showStatus('Password updated.', true);
+                setTimeout(() => changePasswordModal?.close(), 600);
+            } catch (err) {
+                showStatus(err.message || 'Password update failed.', false);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Update';
+                }
+            }
+        });
+    }
 
     // --- Loading & Rendering ---
     function loadMaterials() {

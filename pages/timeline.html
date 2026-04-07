@@ -24,7 +24,7 @@
     <header class="site-header">
         <div class="container">
             <a href="../index.html" class="header-branding" style="text-decoration: none;">
-                <img src="../assets/dimensional-v-white.png" alt="Vanderbilt University" class="header-lockup">
+                <img src="../assets/peabody-lockup-white.png" alt="Peabody College" class="header-lockup">
                 <div class="header-separator"></div>
                 <div class="header-sub-text">Peabody Library | Roger Williams Exhibit</div>
             </a>
@@ -64,8 +64,8 @@
                         </svg>
                     </button>
                     <div class="text-size-indicators">
-                        <span class="size-dot sm" id="dot-size-0">A</span>
-                        <span class="size-dot md active" id="dot-size-1">A</span>
+                        <span class="size-dot sm active" id="dot-size-0">A</span>
+                        <span class="size-dot md" id="dot-size-1">A</span>
                         <span class="size-dot lg" id="dot-size-2">A</span>
                     </div>
                     <button class="btn-text-size" id="btn-text-inc" aria-label="Increase text size">
@@ -156,7 +156,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Vanderbilt University - Peabody Library</p>
+            <p>&copy; 2026 Vanderbilt University - Peabody College</p>
         </div>
     </footer>
 
@@ -471,8 +471,9 @@
                 document.getElementById('dot-size-2')
             ];
 
-            // 0 = small, 1 = default, 2 = large
-            let currentTextSize = parseInt(localStorage.getItem('rwexhibit-text-size') || '1', 10);
+            // Default to "small" for first-time visitors; keep the user's choice once they've adjusted it.
+            const DEFAULT_TEXT_SIZE = 0; // 0 = small, 1 = medium, 2 = large
+            let currentTextSize = parseInt(localStorage.getItem('rwexhibit-text-size') || String(DEFAULT_TEXT_SIZE), 10);
 
             function applyTextSize() {
                 sizeDots.forEach((dot, idx) => {

@@ -10,21 +10,193 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // QR Dialog toggle
+    // QR Dialog toggle + QR scanning (camera)
     const qrCard = document.getElementById('qr-card');
     const qrDialog = document.getElementById('qr-dialog');
     const closeDialog = document.getElementById('close-dialog');
+    const qrScanDialog = document.getElementById('qr-scan-dialog');
+    const qrVideo = document.getElementById('qr-video');
+    const qrScanStatus = document.getElementById('qr-scan-status');
+    const closeQrScan = document.getElementById('close-qr-scan');
+
+    let qrScanner = null;
+
+    const stopQrScanner = () => {
+        if (qrScanner) {
+            qrScanner.stop();
+            qrScanner.destroy();
+            qrScanner = null;
+        }
+        if (qrVideo) {
+            qrVideo.srcObject = null;
+        }
+    };
+
+    const openQrScanner = async () => {
+        if (!qrScanDialog || !qrVideo) return;
+
+        if (!window.QrScanner) {
+            if (qrScanStatus) {
+                qrScanStatus.textContent = 'QR scanning is unavailable (scanner library not loaded).';
+            }
+            return;
+        }
+
+        if (qrScanStatus) {
+            qrScanStatus.textContent = 'Requesting camera access...';
+        }
+
+        // Use the environment/back camera when available.
+        qrScanner = new window.QrScanner(
+            qrVideo,
+            (result) => {
+                const value = typeof result === 'string' ? result : result?.data;
+                if (!value) return;
+
+                const routeFromQrValue = (rawValue) => {
+                    const trimmed = String(rawValue).trim();
+
+                    // 1) Full URLs: follow them (same-app deep links can be encoded as normal URLs too).
+                    if (/^https?:\/\//i.test(trimmed)) {
+                        window.location.href = trimmed;
+                        return true;
+                    }
+
+                    // 2) Year-only codes (e.g. "1864") route to timeline year.
+                    if (/^\d{4}$/.test(trimmed)) {
+                        window.location.href = `pages/timeline.html?year=${encodeURIComponent(trimmed)}`;
+                        return true;
+                    }
+
+                    // 3) App deep links (recommended for your QR codes):
+                    //    - rwe://home
+                    //    - rwe://timeline?year=1864
+                    //    - rwe://timeline
+                    //    - rwe://recently-added
+                    //    - rwe://about
+                    // Also supports "rwe:timeline?year=1864"
+                    const deep = trimmed.replace(/^rwe:/i, "rwe://");
+                    if (/^rwe:\/\//i.test(deep)) {
+                        try {
+                            const u = new URL(deep);
+                            const host = (u.host || "").toLowerCase();
+                            const path = (u.pathname || "").replace(/^\/+/, "").toLowerCase();
+                            const dest = host || path;
+
+                            if (dest === "home") {
+                                window.location.href = "index.html";
+                                return true;
+                            }
+                            if (dest === "timeline") {
+                                const year = u.searchParams.get("year");
+                                window.location.href = year
+                                    ? `pages/timeline.html?year=${encodeURIComponent(year)}`
+                                    : "pages/timeline.html";
+                                return true;
+                            }
+                            if (dest === "recently-added" || dest === "recentlyadded") {
+                                window.location.href = "pages/recently-added.html";
+                                return true;
+                            }
+                            if (dest === "about") {
+                                window.location.href = "pages/about.html";
+                                return true;
+                            }
+                        } catch {
+                            // fall through to unknown handling
+                        }
+                    }
+
+                    // 4) Relative paths inside the app (e.g. "pages/timeline.html?year=1864").
+                    if (/^(index\.html|pages\/)/i.test(trimmed)) {
+                        window.location.href = trimmed;
+                        return true;
+                    }
+
+                    // 5) Key/value shorthand (e.g. "page=timeline&year=1864").
+                    if (/^(page|route)=/i.test(trimmed)) {
+                        try {
+                            const params = new URLSearchParams(trimmed);
+                            const page = (params.get("page") || params.get("route") || "").toLowerCase();
+                            const year = params.get("year");
+                            if (page === "timeline") {
+                                window.location.href = year
+                                    ? `pages/timeline.html?year=${encodeURIComponent(year)}`
+                                    : "pages/timeline.html";
+                                return true;
+                            }
+                            if (page === "about") {
+                                window.location.href = "pages/about.html";
+                                return true;
+                            }
+                            if (page === "recently-added" || page === "recentlyadded") {
+                                window.location.href = "pages/recently-added.html";
+                                return true;
+                            }
+                            if (page === "home") {
+                                window.location.href = "index.html";
+                                return true;
+                            }
+                        } catch {
+                            // fall through
+                        }
+                    }
+
+                    return false;
+                };
+
+                stopQrScanner();
+                qrScanDialog.close();
+
+                if (routeFromQrValue(value)) {
+                    return;
+                }
+
+                // Unknown QR content: show it so staff can diagnose what the QR contains.
+                if (qrScanStatus) {
+                    qrScanStatus.textContent = `Unrecognized QR content: ${String(value).trim()}`;
+                }
+            },
+            {
+                preferredCamera: 'environment',
+                highlightScanRegion: true,
+                highlightCodeOutline: true,
+            }
+        );
+
+        try {
+            qrScanDialog.showModal();
+            await qrScanner.start();
+            if (qrScanStatus) {
+                qrScanStatus.textContent = 'Point your camera at the QR code.';
+            }
+        } catch (err) {
+            stopQrScanner();
+            if (qrScanStatus) {
+                qrScanStatus.textContent = 'Camera access was blocked. Please allow camera permissions and try again.';
+            }
+        }
+    };
 
     if (qrCard && qrDialog && closeDialog) {
         qrCard.addEventListener('click', () => {
-            qrDialog.showModal();
+            // Prefer camera-based scanning on mobile app devices; fall back to the help dialog if needed.
+            if (qrScanDialog && qrVideo) {
+                openQrScanner();
+            } else {
+                qrDialog.showModal();
+            }
         });
 
         // Also allow opening via keyboard (Enter or Space)
         qrCard.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                qrDialog.showModal();
+                if (qrScanDialog && qrVideo) {
+                    openQrScanner();
+                } else {
+                    qrDialog.showModal();
+                }
             }
         });
 
@@ -43,6 +215,20 @@ document.addEventListener('DOMContentLoaded', () => {
             ) {
                 qrDialog.close();
             }
+        });
+    }
+
+    if (closeQrScan && qrScanDialog) {
+        closeQrScan.addEventListener('click', () => {
+            stopQrScanner();
+            qrScanDialog.close();
+        });
+    }
+
+    if (qrScanDialog) {
+        // Ensure camera shuts off if the dialog is closed by other means.
+        qrScanDialog.addEventListener('close', () => {
+            stopQrScanner();
         });
     }
 

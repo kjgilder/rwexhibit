@@ -113,8 +113,7 @@ img {
 
 /* New Lockup Style */
 .header-lockup {
-    height: 55px;
-    /* Adjust height to match desired size */
+    height: 44px;
     width: auto;
     display: block;
 }
@@ -164,8 +163,7 @@ img {
     }
 
     .header-lockup {
-        height: 45px;
-        /* Slightly smaller on mobile */
+        height: 36px;
     }
 }
 
