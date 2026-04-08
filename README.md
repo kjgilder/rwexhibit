@@ -16,24 +16,26 @@ To run the project locally with full admin functionality:
 
 ---
 
-## Architecture & Build System
+## Architecture & Deployment
 
-The project uses a "Build-Once, Run-Anywhere" approach to handle dynamic content without requiring a database for the main timeline.
+The project uses a "Build-Once, Run-Anywhere" approach. It is fully responsive and deployed using Vercel.
 
 ### 1. The Timeline Content Bundler (`build.py`)
 The individual sections of the timeline are stored as HTML partials in `pages/timeline-content/`.
 - **To make changes:** Edit the `.html` file for the specific year.
-- **To update the site:** You **MUST** run the build script to bundle these partials into the main JavaScript file:
+- **To update the site:** You **MUST** run the build script to bundle these partials into the main JavaScript file.
   ```bash
   python3 build.py
   ```
-This generates `pages/timeline-content.js`, which allows the timeline to load content instantly without network requests.
+This generates `pages/timeline-content.js`, which allows the timeline to load content instantly. Note: Vercel automatically runs this command on deployment.
 
-### 2. The Admin Backend (`server.py`)
-A lightweight Python server handles the "Recently Added Material" section.
-- **API:** Provides REST endpoints for adding, editing, reordering, and deleting materials.
-- **Storage:** Metadata is stored in `data/materials.json`. Files are uploaded to `assets/uploads/`.
-- **Auth:** Basic session-based admin login (credentials found in `js/recently-added.js`).
+### 2. The Admin Backend (Vercel Serverless & Redis)
+The backend is powered by Python and hosted instantly via Vercel Serverless Functions found in the `api/` directory.
+
+- **Storage:** All dynamic content (text, titles) is stored in a Vercel KV (Redis) database.
+- **Media:** Uploaded images and documents are stored securely using Vercel Blob.
+- **Auth:** Sessions and admin credentials are automatically hashed and stored in Redis.
+- **Local Dev:** Running `python3 server.py` runs a simulated development server locally that seamlessly mimics the online Serverless architecture.
 
 ---
 

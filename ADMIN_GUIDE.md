@@ -11,7 +11,7 @@ To access the management tools:
 3.  Click the small **Admin** link next to the copyright text.
 4.  Enter your credentials:
     -   **Email:** `ally.jacobs@vanderbilt.edu`
-    -   **Password:** `allyjacobs`
+    -   **Password:** `allyjacobs` (or your updated custom password)
 
 ---
 
@@ -40,5 +40,14 @@ If you upload multiple photos at once, they will automatically be grouped into a
 
 ---
 
-### 5. Logging Out
+### 5. Changing Your Password
+You can update your admin password at any time while logged in.
+1. Click the "Change Password" button in the admin tools panel.
+2. Enter your current password for verification.
+3. Enter your new password (it must be at least 8 characters long).
+4. Click "Update Password" to save it securely to the database.
+
+---
+
+### 6. Logging Out
 When you are finished, click the **Logout** link in the footer. This will hide the admin tools and allow you to see the gallery exactly as a regular visitor would.
