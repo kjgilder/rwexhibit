@@ -81,6 +81,15 @@
         <div class="progress-container">
             <div class="progress-info">
                 <span class="progress-text" id="progress-text">Section 1 of 12</span>
+
+                <!-- Jump Navigation -->
+                <div class="timeline-jump-nav">
+                    <label for="timeline-jump" class="timeline-jump-label">Go to</label>
+                    <select id="timeline-jump" class="timeline-jump-select">
+                        <option value="">Select a section</option>
+                    </select>
+                </div>
+                
                 <span class="badge badge-gold" id="progress-badge">Wall 1</span>
             </div>
             <div class="interactive-timeline-track" id="interactive-track">
@@ -206,6 +215,7 @@
             const interactiveTrack = document.getElementById('interactive-track');
             const progressText = document.getElementById('progress-text');
             const progressBadge = document.getElementById('progress-badge');
+            const timelineJump = document.getElementById('timeline-jump');
             const yearHeading = document.getElementById('year-heading');
             const panelTitle = document.getElementById('panel-title');
             const contextContent = document.getElementById('context-content');
@@ -349,6 +359,27 @@
                 }
             }
 
+            function initTimelineJumpMenu() {
+                if (!timelineJump) return;
+
+                timelineJump.innerHTML = '<option value="">Select a section</option>';
+
+                timelineData.forEach((item, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+
+                    if (item.year) {
+                        option.textContent = `Section ${index + 1} — ${item.year}`;
+                    } else {
+                        option.textContent = `Section ${index + 1}`;
+                    }
+
+                    timelineJump.appendChild(option);
+                });
+
+                timelineJump.value = currentIndex.toString();
+            }
+
             function updateUI() {
                 if (nodePopover && nodePopover.style.display === 'flex') {
                     nodePopover.style.display = 'none';
@@ -410,6 +441,10 @@
                     btnNext.disabled = false;
                     btnNext.innerHTML = 'Next <span class="arrow">›</span>';
                 }
+
+                if (timelineJump) {
+                    timelineJump.value = currentIndex.toString();
+                }
             }
 
             function updateURL() {
@@ -452,6 +487,18 @@
                 }
             });
 
+            if (timelineJump) {
+                timelineJump.addEventListener('change', () => {
+                    const selectedIndex = parseInt(timelineJump.value, 10);
+
+                    if (!isNaN(selectedIndex)) {
+                        currentIndex = selectedIndex;
+                        updateUI();
+                        updateURL();
+                    }
+                });
+            }
+
             window.addEventListener('popstate', () => {
                 checkURL();
                 updateUI();
@@ -460,6 +507,7 @@
             // Initial Load
             checkURL();
             initTimelineNodes();
+            initTimelineJumpMenu();
             updateUI();
 
             // Text Size Resizer Logic
