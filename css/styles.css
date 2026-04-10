@@ -2238,3 +2238,71 @@ details>summary {
         display: none;
     }
 }
+
+/* =========================================
+   Timeline Jump Navigation
+========================================= */
+.progress-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.timeline-jump-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-jump-label {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-primary-black);
+    white-space: nowrap;
+    margin: 0;
+}
+
+.timeline-jump-select {
+    min-width: 180px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background: var(--color-primary-white);
+    color: var(--color-primary-black);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.timeline-jump-select:focus {
+    outline: none;
+    border-color: var(--color-primary-gold);
+    box-shadow: 0 0 0 3px rgba(196, 155, 92, 0.15);
+}
+
+#progress-badge {
+    margin-left: auto;
+}
+
+@media (max-width: 600px) and (pointer: coarse) {
+    .progress-info {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .timeline-jump-inline {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .timeline-jump-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    #progress-badge {
+        margin-left: 0;
+    }
+}
