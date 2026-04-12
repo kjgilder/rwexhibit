@@ -73,9 +73,9 @@ class handler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                 return
 
-            # 2. Update (JSON)
+            # 2. Update (Multipart or JSON)
             if material_id:
-                update_data = json.loads(body)
+                content_type = self.headers.get('Content-Type', '')
                 data = kv.get("materials")
                 materials = json.loads(data) if data else []
                 
@@ -85,22 +85,71 @@ class handler(BaseHTTPRequestHandler):
                         found_idx = i
                         break
                 
-                if found_idx != -1:
-                    m = materials[found_idx]
+                if found_idx == -1:
+                    self._set_headers(404)
+                    self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
+                    return
+                m = materials[found_idx]
+
+                if 'multipart/form-data' in content_type:
+                    import email.message
+                    msg = email.message.Message()
+                    msg['Content-Type'] = content_type
+                    boundary = msg.get_param('boundary').encode()
+                    parts = body.split(b'--' + boundary)
+                    
+                    title = ""
+                    existing_items_json = ""
+                    temp_files = []
+                    temp_descriptions = {}
+
+                    for part in parts:
+                        if not part or part.strip() in [b'--', b'']: continue
+                        header_part, _, part_data = part.partition(b'\r\n\r\n')
+                        headers = email.message_from_bytes(header_part.lstrip())
+                        disposition = headers.get('Content-Disposition', '')
+                        dis_params = {p.split('=')[0].strip(): p.split('=')[1].strip('"') for p in disposition.split(';') if '=' in p}
+                        name = dis_params.get('name')
+                        
+                        if name == 'title':
+                            title = part_data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name == 'existing_items':
+                            existing_items_json = part_data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name and name.startswith('desc_'):
+                            temp_descriptions[name.replace('desc_', '')] = part_data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name == 'image' and 'filename' in dis_params:
+                            filename = dis_params['filename']
+                            _, ext = os.path.splitext(filename)
+                            blob_data = put(f"uploads/{uuid.uuid4()}{ext}", part_data.rstrip(b'\r\n'))
+                            temp_files.append({"path": blob_data['url'], "id": str(len(temp_files))})
+
+                    if title: m["title"] = title
+                    newly_uploaded = [{"path": f["path"], "description": temp_descriptions.get(f["id"], "")} for f in temp_files]
+
+                    if existing_items_json:
+                        kept_items = json.loads(existing_items_json)
+                        kept_paths = {k["path"] for k in kept_items}
+                        for old_item in m.get("items", []):
+                            if old_item["path"] not in kept_paths:
+                                try: blob_delete(old_item["path"])
+                                except: pass
+                        m["items"] = kept_items + newly_uploaded
+                    else:
+                        if len(newly_uploaded) > 0:
+                            m["items"] = m.get("items", []) + newly_uploaded
+                else:
+                    update_data = json.loads(body)
                     if "title" in update_data: m["title"] = update_data["title"]
                     if "items" in update_data:
                         for u_item in update_data["items"]:
                             idx = u_item.get("index")
                             if idx is not None and idx < len(m.get("items", [])):
                                 m["items"][idx]["description"] = u_item["description"]
-                    kv.set("materials", json.dumps(materials))
-                    self._set_headers(200)
-                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-                    return
-                else:
-                    self._set_headers(404)
-                    self.wfile.write(json.dumps({"error": f"Material {material_id} not found"}).encode('utf-8'))
-                    return
+
+                kv.set("materials", json.dumps(materials))
+                self._set_headers(200)
+                self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                return
 
             # 3. Create (Multipart)
             if raw_path == '/api/materials':

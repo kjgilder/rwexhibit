@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <svg viewBox="0 0 24 24" width="64" height="64" style="fill:none; stroke:currentColor; stroke-width:2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         <span>View PDF</span>
                       </a>`
-                    : `<img src="${formatPath(doc.path)}" class="material-image thumbnail-img-inline">`;
+                    : `<img src="${formatPath(doc.path)}" class="material-image thumbnail-img-inline" data-desc="${(doc.description || '').replace(/"/g, '&quot;')}">`;
             } else if (items.length > 1) {
                 mediaHTML = `
                     <div class="document-carousel-container" style="height:100%">
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="carousel-slide">
                                     ${it.path.toLowerCase().endsWith('.pdf') 
                                         ? `<iframe src="${formatPath(it.path)}#view=FitW"></iframe>` 
-                                        : `<img src="${formatPath(it.path)}" class="thumbnail-img-inline">`}
+                                        : `<img src="${formatPath(it.path)}" class="thumbnail-img-inline" data-desc="${(it.description || '').replace(/"/g, '&quot;')}">`}
                                 </div>
                             `).join('')}
                         </div>
@@ -408,21 +408,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const editForm = document.getElementById('edit-form');
     const editItemsContainer = document.getElementById('edit-items-container');
     const closeEditModalBtn = document.getElementById('close-edit-modal');
+    const editFileInput = document.getElementById('edit-material-image');
     let currentEditId = null;
+    let editExistingItems = [];
+    let editStagedFiles = [];
 
-    function handleEdit(e) {
-        const id = e.currentTarget.dataset.id;
-        const item = materialsList.find(m => m.id === id);
-        if (!item) return;
-
-        currentEditId = id;
-        document.getElementById('edit-title').value = item.title;
-        
+    function renderEditItems() {
         editItemsContainer.innerHTML = '';
-        item.items.forEach((it, idx) => {
+        
+        // 1. Render existing kept items
+        editExistingItems.forEach((it, idx) => {
             const row = document.createElement('div');
             row.className = 'staged-file-card';
-            row.style.gridTemplateColumns = '60px 1fr';
+            row.style.gridTemplateColumns = '60px 1fr 30px';
             row.style.marginBottom = '10px';
 
             const isPdf = it.path.toLowerCase().endsWith('.pdf');
@@ -433,12 +431,88 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <div class="staged-thumb" style="width:60px; height:45px;">${thumbHTML}</div>
                 <div class="staged-info">
-                    <textarea class="edit-item-desc" data-index="${idx}" style="width:100%; min-height:60px; padding:8px; border-radius:4px; border:1px solid #ddd; font-family:var(--font-body); font-size:0.85rem;">${it.description || ""}</textarea>
+                    <textarea class="edit-item-desc" data-type="existing" data-idx="${idx}" style="width:100%; min-height:60px; padding:8px; border-radius:4px; border:1px solid #ddd; font-family:var(--font-body); font-size:0.85rem;">${it.description || ""}</textarea>
                 </div>
+                <button type="button" class="btn-remove-staged" data-type="existing" data-idx="${idx}">&times;</button>
             `;
             editItemsContainer.appendChild(row);
         });
 
+        // 2. Render newly staged files
+        editStagedFiles.forEach((sf, idx) => {
+            const row = document.createElement('div');
+            row.className = 'staged-file-card';
+            row.style.gridTemplateColumns = '60px 1fr 30px';
+            row.style.marginBottom = '10px';
+            row.style.backgroundColor = '#f0f8ff'; // highlight new
+            
+            const isImage = sf.file.type.startsWith('image/');
+            const thumbHTML = isImage 
+                ? `<img src="${URL.createObjectURL(sf.file)}" style="width:100%; height:100%; object-fit:cover;">`
+                : `<svg viewBox="0 0 24 24" width="24" height="24" style="fill:none; stroke:currentColor; stroke-width:1;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+
+            row.innerHTML = `
+                <div class="staged-thumb" style="width:60px; height:45px;">${thumbHTML}</div>
+                <div class="staged-info">
+                    <div style="font-size:0.75rem; color:#666; margin-bottom:2px;">(New) ${sf.file.name}</div>
+                    <textarea class="edit-item-desc" data-type="new" data-idx="${idx}" style="width:100%; min-height:40px; padding:8px; border-radius:4px; border:1px solid #ddd; font-family:var(--font-body); font-size:0.85rem;" placeholder="Description">${sf.description || ""}</textarea>
+                </div>
+                <button type="button" class="btn-remove-staged" data-type="new" data-idx="${idx}">&times;</button>
+            `;
+            editItemsContainer.appendChild(row);
+        });
+
+        // Add listeners
+        editItemsContainer.querySelectorAll('.edit-item-desc').forEach(ta => {
+            ta.addEventListener('input', e => {
+                const type = e.target.dataset.type;
+                const idx = parseInt(e.target.dataset.idx);
+                if (type === 'existing') editExistingItems[idx].description = e.target.value;
+                else if (type === 'new') editStagedFiles[idx].description = e.target.value;
+            });
+        });
+
+        editItemsContainer.querySelectorAll('.btn-remove-staged').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const type = e.currentTarget.dataset.type;
+                const idx = parseInt(e.currentTarget.dataset.idx);
+                if (type === 'existing') {
+                    editExistingItems.splice(idx, 1);
+                } else if (type === 'new') {
+                    editStagedFiles.splice(idx, 1);
+                }
+                renderEditItems();
+            });
+        });
+    }
+
+    if (editFileInput) {
+        editFileInput.addEventListener('change', () => {
+            const files = Array.from(editFileInput.files);
+            files.forEach(f => {
+                editStagedFiles.push({
+                    file: f,
+                    id: Math.random().toString(36).substr(2, 9),
+                    description: ""
+                });
+            });
+            editFileInput.value = ""; 
+            renderEditItems();
+        });
+    }
+
+    function handleEdit(e) {
+        const id = e.currentTarget.dataset.id;
+        const item = materialsList.find(m => m.id === id);
+        if (!item) return;
+
+        currentEditId = id;
+        document.getElementById('edit-title').value = item.title;
+        
+        editExistingItems = JSON.parse(JSON.stringify(item.items || []));
+        editStagedFiles = [];
+        
+        renderEditItems();
         editModal.showModal();
     }
 
@@ -453,22 +527,20 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
 
-            const updatedItems = Array.from(editItemsContainer.querySelectorAll('.edit-item-desc')).map(ta => ({
-                index: parseInt(ta.dataset.index),
-                description: ta.value
-            }));
+            const formData = new FormData();
+            formData.append('title', document.getElementById('edit-title').value);
+            formData.append('existing_items', JSON.stringify(editExistingItems));
 
-            const payload = {
-                title: document.getElementById('edit-title').value,
-                items: updatedItems
-            };
+            editStagedFiles.forEach((sf, i) => {
+                formData.append('image', sf.file);
+                formData.append(`desc_${i}`, sf.description);
+            });
 
             try {
                 const url = `${API_BASE}/api/materials?id=${encodeURIComponent(currentEditId)}`;
                 const res = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
                 if (res.ok) {
                     const statusMsg = document.createElement('div');
@@ -478,6 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     setTimeout(() => {
                         editModal.close();
+                        statusMsg.remove();
                         loadMaterials();
                     }, 1000);
                 } else {
