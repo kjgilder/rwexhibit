@@ -265,9 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ` : ''}
                 <div class="material-image-container">${mediaHTML}</div>
                 <div class="material-content">
+                    <p class="material-description" id="desc-${item.id}">${currentDesc}</p>
                     <h3 class="material-title">${item.title}</h3>
                     <div class="material-date">Added on ${new Date(item.timestamp*1000).toLocaleDateString()}</div>
-                    <p class="material-description" id="desc-${item.id}">${currentDesc}</p>
                 </div>
             `;
             materialsContainer.appendChild(card);
