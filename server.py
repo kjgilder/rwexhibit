@@ -303,48 +303,141 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
             return
 
-        # --- Handle Update (POST /api/materials/{id}) ---
+        # --- Handle Update (POST /api/materials/{id} or POST /api/materials?id={id}) ---
         path_parts = parsed_path.path.split('/')
-        if len(path_parts) == 4 and path_parts[1] == 'api' and path_parts[2] == 'materials':
-            material_id = path_parts[3]
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            
-            try:
-                update_data = json.loads(post_data)
-                with open(DATA_FILE, 'r') as f:
-                    materials = json.load(f)
-                
-                # Find and update
-                updated = False
-                for m in materials:
-                    if m["id"] == material_id:
-                        if "title" in update_data:
-                            m["title"] = update_data["title"]
-                        if "items" in update_data:
-                            # update_data["items"] is [ { index, description } ]
-                            for update_item in update_data["items"]:
-                                idx = update_item.get("index")
-                                if idx is not None and idx < len(m.get("items", [])):
-                                    m["items"][idx]["description"] = update_item["description"]
-                        updated = True
-                        break
-                
-                if not updated:
-                    self._set_headers(404)
-                    return
-                
-                with open(DATA_FILE, 'w') as f:
-                    json.dump(materials, f, indent=4)
-                
-                self._set_headers(200)
-                self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-            except Exception as e:
-                self._set_headers(500)
-                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
+        qs = parse_qs(parsed_path.query)
+        material_id_from_qs = qs.get("id", [None])[0]
+        
+        if (len(path_parts) == 4 and path_parts[1] == 'api' and path_parts[2] == 'materials') or (parsed_path.path == '/api/materials' and material_id_from_qs):
+            material_id = path_parts[3] if len(path_parts) == 4 else material_id_from_qs
+            content_type = self.headers.get('Content-Type')
+            if content_type and 'multipart/form-data' in content_type:
+                try:
+                    import email.message
+                    msg = email.message.Message()
+                    msg['Content-Type'] = content_type
+                    boundary = msg.get_param('boundary').encode()
+                    
+                    content_length = int(self.headers.get('Content-Length', 0))
+                    body = self.rfile.read(content_length)
+                    parts = body.split(b'--' + boundary)
+                    
+                    title = ""
+                    existing_items_json = ""
+                    temp_files = [] 
+                    temp_descriptions = {}
 
-        if parsed_path.path == '/api/materials':
+                    for part in parts:
+                        if not part or part.strip() in [b'--', b'']: continue
+                        
+                        header_part, _, data = part.partition(b'\r\n\r\n')
+                        headers = email.message_from_bytes(header_part.lstrip())
+                        disposition = headers.get('Content-Disposition', '')
+                        
+                        params = {}
+                        for param in disposition.split(';'):
+                            if '=' in param:
+                                k, v = param.strip().split('=', 1)
+                                params[k] = v.strip('"')
+                        name = params.get('name')
+                        
+                        if name == 'title':
+                            title = data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name == 'existing_items':
+                            existing_items_json = data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name and name.startswith('desc_'):
+                            key = name.replace('desc_', '')
+                            temp_descriptions[key] = data.rstrip(b'\r\n').decode('utf-8').strip()
+                        elif name == 'image' and 'filename' in params:
+                            filename = params['filename']
+                            _, ext = os.path.splitext(filename)
+                            unique_name = f"{uuid.uuid4()}{ext}"
+                            filepath = os.path.join(UPLOAD_DIR, unique_name)
+                            with open(filepath, 'wb') as f:
+                                f.write(data.rstrip(b'\r\n'))
+                            temp_files.append({
+                                "path": f"{UPLOAD_DIR}/{unique_name}",
+                                "id": str(len(temp_files))
+                            })
+
+                    with open(DATA_FILE, 'r') as f:
+                        materials = json.load(f)
+                    
+                    updated = False
+                    for m in materials:
+                        if m["id"] == material_id:
+                            if title: m["title"] = title
+                            
+                            newly_uploaded = [{"path": f["path"], "description": temp_descriptions.get(f["id"], "")} for f in temp_files]
+                            
+                            if existing_items_json:
+                                kept_items = json.loads(existing_items_json)
+                                kept_paths = {k["path"] for k in kept_items}
+                                
+                                for old_item in m.get("items", []):
+                                    if old_item["path"] not in kept_paths:
+                                        if os.path.exists(old_item["path"]):
+                                            os.remove(old_item["path"])
+                                            
+                                m["items"] = kept_items + newly_uploaded
+                            else:
+                                if len(newly_uploaded) > 0:
+                                    m["items"] = m.get("items", []) + newly_uploaded
+
+                            updated = True
+                            break
+                    
+                    if not updated:
+                        self._set_headers(404)
+                        return
+                    
+                    with open(DATA_FILE, 'w') as f:
+                        json.dump(materials, f, indent=4)
+                    
+                    self._set_headers(200)
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    self._set_headers(500)
+                    self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                return
+            else:
+                content_length = int(self.headers.get('Content-Length', 0))
+                post_data = self.rfile.read(content_length)
+                try:
+                    update_data = json.loads(post_data)
+                    with open(DATA_FILE, 'r') as f:
+                        materials = json.load(f)
+                    
+                    updated = False
+                    for m in materials:
+                        if m["id"] == material_id:
+                            if "title" in update_data:
+                                m["title"] = update_data["title"]
+                            if "items" in update_data:
+                                for update_item in update_data["items"]:
+                                    idx = update_item.get("index")
+                                    if idx is not None and idx < len(m.get("items", [])):
+                                        m["items"][idx]["description"] = update_item["description"]
+                            updated = True
+                            break
+                    
+                    if not updated:
+                        self._set_headers(404)
+                        return
+                    
+                    with open(DATA_FILE, 'w') as f:
+                        json.dump(materials, f, indent=4)
+                    
+                    self._set_headers(200)
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                except Exception as e:
+                    self._set_headers(500)
+                    self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+                return
+
+        if parsed_path.path == '/api/materials' and not getattr(self, 'material_id_from_qs', parse_qs(parsed_path.query).get('id', [None])[0]):
             content_type = self.headers.get('Content-Type')
             if not content_type or 'multipart/form-data' not in content_type:
                 self._set_headers(400)
@@ -439,10 +532,12 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_DELETE(self):
         parsed_path = urlparse(self.path)
+        qs = parse_qs(parsed_path.query)
+        material_id_from_qs = qs.get("id", [None])[0]
         path_parts = parsed_path.path.split('/')
         
-        if len(path_parts) == 4 and path_parts[1] == 'api' and path_parts[2] == 'materials':
-            material_id = path_parts[3]
+        if (len(path_parts) == 4 and path_parts[1] == 'api' and path_parts[2] == 'materials') or (parsed_path.path == '/api/materials' and material_id_from_qs):
+            material_id = path_parts[3] if len(path_parts) == 4 else material_id_from_qs
             try:
                 with open(DATA_FILE, 'r') as f:
                     materials = json.load(f)

@@ -238,33 +238,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeImageModal = document.getElementById('close-image-modal');
 
     const modalCaption = document.getElementById('modal-caption');
+    const modalPrevBtn = document.getElementById('modal-prev-btn');
+    const modalNextBtn = document.getElementById('modal-next-btn');
+
+    let currentModalImages = [];
+    let currentModalIndex = 0;
+
+    function updateModalView() {
+        if (currentModalImages.length === 0) return;
+        const img = currentModalImages[currentModalIndex];
+        const src = img.getAttribute('src');
+        const alt = img.getAttribute('alt');
+        const desc = img.getAttribute('data-desc');
+
+        if (src) {
+            modalImage.src = src;
+            modalImage.alt = alt || 'Enlarged Image';
+            if (modalCaption) {
+                modalCaption.textContent = desc || alt || '';
+            }
+        }
+        
+        if (currentModalImages.length > 1) {
+            if (modalPrevBtn) modalPrevBtn.style.display = 'block';
+            if (modalNextBtn) modalNextBtn.style.display = 'block';
+        } else {
+            if (modalPrevBtn) modalPrevBtn.style.display = 'none';
+            if (modalNextBtn) modalNextBtn.style.display = 'none';
+        }
+    }
 
     if (imageModal && modalImage && closeImageModal) {
         // Use capture phase so we intercept BEFORE the native <summary> toggle fires.
         document.body.addEventListener('click', (e) => {
             const img = e.target.closest('img.thumbnail-img-inline');
             if (img) {
-                const src = img.getAttribute('src');
-                const alt = img.getAttribute('alt');
-
                 // Prevent details from toggling
                 if (img.closest('summary')) {
                     e.preventDefault();
                 }
 
-                if (src) {
-                    modalImage.src = src;
-                    modalImage.alt = alt || 'Enlarged Image';
-                    if (modalCaption) {
-                        modalCaption.textContent = alt || '';
-                    }
-                    
-                    // Lock scrolling
-                    document.body.style.overflow = 'hidden';
-                    imageModal.showModal();
+                const card = img.closest('.material-card') || img.closest('.timeline-card');
+                if (card) {
+                    currentModalImages = Array.from(card.querySelectorAll('img.thumbnail-img-inline'));
+                } else {
+                    currentModalImages = [img];
                 }
+                
+                currentModalIndex = currentModalImages.indexOf(img);
+                if (currentModalIndex === -1) currentModalIndex = 0;
+
+                updateModalView();
+                
+                // Lock scrolling
+                document.body.style.overflow = 'hidden';
+                imageModal.showModal();
             }
         }, true);
+
+        if (modalPrevBtn) {
+            modalPrevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentModalImages.length > 0) {
+                    currentModalIndex = (currentModalIndex - 1 + currentModalImages.length) % currentModalImages.length;
+                    updateModalView();
+                }
+            });
+        }
+
+        if (modalNextBtn) {
+            modalNextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentModalImages.length > 0) {
+                    currentModalIndex = (currentModalIndex + 1) % currentModalImages.length;
+                    updateModalView();
+                }
+            });
+        }
 
         const closeModalFunc = () => {
             // Unlock scrolling
@@ -274,6 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { 
                 modalImage.src = ''; 
                 if (modalCaption) modalCaption.textContent = '';
+                currentModalImages = [];
+                if (modalPrevBtn) modalPrevBtn.style.display = 'none';
+                if (modalNextBtn) modalNextBtn.style.display = 'none';
             }, 300);
         };
 

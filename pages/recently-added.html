@@ -95,7 +95,10 @@
     <!-- Global Image Modal -->
     <dialog id="image-modal" class="image-modal">
         <button id="close-image-modal" class="modal-close" aria-label="Close image">&times;</button>
+        <button id="modal-prev-btn" class="modal-nav-btn prev" aria-label="Previous image" style="display: none; position: fixed; top: 50%; left: 20px; transform: translateY(-50%); width: 40px; height: 40px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s;">&#10094;</button>
+        <button id="modal-next-btn" class="modal-nav-btn next" aria-label="Next image" style="display: none; position: fixed; top: 50%; right: 20px; transform: translateY(-50%); width: 40px; height: 40px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s;">&#10095;</button>
         <img id="modal-image" src="" alt="Enlarged view">
+        <div id="modal-caption" style="color: var(--color-primary-black, black); text-align: center; margin-top: 15px; font-size: 1.1rem; padding: 0 20px; font-family: var(--font-body);"></div>
     </dialog>
 
     <!-- Login Modal -->
@@ -168,9 +171,14 @@
                     <input type="text" id="edit-title" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-primary-gold); border-radius: 4px;">
                 </div>
                 
-                <h4 style="text-align: left; margin-bottom: 0.5rem; color: var(--color-secondary-dark-gray);">Item Descriptions</h4>
+                <h4 style="text-align: left; margin-bottom: 0.5rem; color: var(--color-secondary-dark-gray);">Items</h4>
                 <div id="edit-items-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 1.5rem;">
                     <!-- Populated by JS -->
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+                    <label for="edit-material-image">Add new Image(s) or Document File(s)</label>
+                    <input type="file" id="edit-material-image" accept="image/*, application/pdf" multiple style="margin-bottom: 15px; width: 100%;">
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
