@@ -12,6 +12,21 @@ body {
     background-color: var(--background-color);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* About page: accordions span viewport width (not .container max-width) */
+.about-main {
+    width: 100%;
+    max-width: none;
+    padding: var(--spacing-lg) var(--spacing-md);
+    box-sizing: border-box;
 }
 
 h1,
@@ -1847,6 +1862,7 @@ details>summary {
     text-align: center;
     border-top: 4px solid var(--color-primary-gold);
     font-family: var(--font-body);
+    flex-shrink: 0;
 }
 /* Team Grid and Cards for Credits Section */
 .team-grid {
