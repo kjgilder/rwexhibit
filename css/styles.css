@@ -6,22 +6,16 @@
     padding: 0;
 }
 
-html, body {
-    height: 100%;
-}
-
 body {
     font-family: var(--font-body);
     color: var(--text-color);
     background-color: var(--background-color);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    display: flex;
-    flex-direction: column;
 }
 
 main {
-    flex: 1;
+    min-height: calc(100vh - 200px); /* Accommodate header and footer */
 }
 
 h1,
