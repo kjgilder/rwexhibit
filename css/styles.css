@@ -14,6 +14,10 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+main {
+    min-height: calc(100vh - 200px); /* Accommodate header and footer */
+}
+
 h1,
 h2,
 h3,
@@ -558,6 +562,7 @@ details>summary {
 /* Header */
 .timeline-header {
     text-align: center;
+    padding-top: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
 }
 
