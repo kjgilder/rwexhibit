@@ -562,6 +562,7 @@ details>summary {
 /* Header */
 .timeline-header {
     text-align: center;
+    padding-top: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
 }
 
